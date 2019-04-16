@@ -6,6 +6,7 @@ public:
 	float x, y;
 };
 
+
 class Point
 {
 public:
@@ -14,6 +15,14 @@ public:
 	float x, y;
 };
 
+Vector operator-(Point a, Point b)
+{
+	Vector v;
+	v.x = a.x - b.x;
+	v.y = a.y - b.y;
+	
+	return v;
+}
 
 Point Point::AddVector(Vector v)
 {
@@ -30,8 +39,12 @@ int main(int argc, char** args)
 	Vector v{ 2, 3 };
 
 	Point p2 = p.AddVector(v);
-	std::cout << "Result: (" << p2.x << ", " << p2.y << ")\n";
+	std::cout << "Result [AddVector]: (" << p2.x << ", " << p2.y << ")\n";
 
+	p = { 0,-1 };
+	Point i{ 1, 1 };
+	v = p - i;
+	std::cout << "Result  [ p - i ] : (" << v.x << ", " << v.y << ")\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
