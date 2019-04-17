@@ -4,6 +4,7 @@ class Vector
 {
 public:
 	float Length() const;
+	float LengthSqr() const;
 	
 	float x, y;
 };
@@ -24,6 +25,15 @@ float Vector::Length() const
 	length = std::sqrt(x*x + y*y);
 	return length;
 }
+
+float Vector::LengthSqr() const
+{
+	float length;
+	length = (x*x + y*y);
+	return length;
+}
+
+
 
 Vector operator-(Point a, Point b)
 {
@@ -53,11 +63,19 @@ int main(int argc, char** args)
 
 	p = { 0,-1 };
 	Point i{ 1, 1 };
+	Point c{ 2, -1 };
 	v = p - i;
 	std::cout << "Result  [ p - i ] : (" << v.x << ", " << v.y << ")\n";
 
 	float lenght = v.Length();
 	std::cout << "Result  [Length]  : " << lenght << "\n";
+
+	// 4 MFGD - Distance Comparison
+	Vector ip = p - i;
+	Vector cp = p - c;
+
+	std::cout << "Length square of CP: " << cp.LengthSqr() << "\n";
+	std::cout << "Length square of IP: " << ip.LengthSqr() << "\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
