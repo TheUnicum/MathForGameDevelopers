@@ -3,9 +3,16 @@
 class Vector
 {
 public:
+	Vector() {}
+	Vector(float x, float y)
+		: x(x), y(y) {}
+
 	float Length() const;
 	float LengthSqr() const;
 	
+	Vector operator*(float) const;
+	Vector operator/(float) const;
+
 	float x, y;
 };
 
@@ -33,6 +40,21 @@ float Vector::LengthSqr() const
 	return length;
 }
 
+Vector Vector::operator*(float s) const
+{
+	Vector scaled;
+	scaled.x = x * s;
+	scaled.y = y * s;
+	return scaled;
+}
+
+Vector Vector::operator/(float s) const
+{
+	Vector scaled;
+	scaled.x = x / s;
+	scaled.y = y / s;
+	return scaled;
+}
 
 
 Vector operator-(Point a, Point b)
@@ -76,6 +98,14 @@ int main(int argc, char** args)
 
 	std::cout << "Length square of CP: " << cp.LengthSqr() << "\n";
 	std::cout << "Length square of IP: " << ip.LengthSqr() << "\n";
+
+	// 5 MFGD - Vector scaling
+	v = Vector(3, 4);
+	std::cout << "Pac-man's initial speed: " << v.Length() << "\n";
+	Vector doubled = v * 2;
+	std::cout << "Pac-man's doubeld speed: " << doubled.Length() << "\n";
+	Vector halved = v / 2;
+	std::cout << "Pac-man's halved speed: " << halved.Length() << "\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
