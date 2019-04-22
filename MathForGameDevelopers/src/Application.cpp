@@ -13,6 +13,9 @@ public:
 	Vector operator*(float) const;
 	Vector operator/(float) const;
 
+	Vector Normalized() const;
+
+public:
 	float x, y;
 };
 
@@ -56,6 +59,13 @@ Vector Vector::operator/(float s) const
 	return scaled;
 }
 
+
+Vector Vector::Normalized() const
+{
+	Vector Normalized;
+	Normalized = (*this) / Length();
+	return Normalized;
+}
 
 Vector operator-(Point a, Point b)
 {
@@ -106,6 +116,15 @@ int main(int argc, char** args)
 	std::cout << "Pac-man's doubeld speed: " << doubled.Length() << "\n";
 	Vector halved = v / 2;
 	std::cout << "Pac-man's halved speed: " << halved.Length() << "\n";
+
+	// 6 MFGD - Normalized
+	i = { 3, 4 };
+	p = { 1, 2 };
+	Vector pi = i - p;
+	Vector normalized = pi.Normalized();
+
+	std::cout << "Pac-man's view vector : (" << normalized.x << ", " << normalized.y << ")\n";
+	std::cout << "Pac-man's view vector length: (" << normalized.Length() << ")\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
