@@ -10,6 +10,9 @@ public:
 	float Length() const;
 	float LengthSqr() const;
 	
+	Vector operator+(const Vector& v) const;
+	Vector operator-(const Vector& v) const;
+
 	Vector operator*(float) const;
 	Vector operator/(float) const;
 
@@ -41,6 +44,17 @@ float Vector::LengthSqr() const
 	float length;
 	length = (x*x + y*y);
 	return length;
+}
+
+
+Vector Vector::operator+(const Vector& v) const
+{
+	return Vector(x + v.x, y + v.y);
+}
+
+Vector Vector::operator-(const Vector& v) const
+{
+	return Vector(x - v.x, y - v.y);
 }
 
 Vector Vector::operator*(float s) const
@@ -125,6 +139,13 @@ int main(int argc, char** args)
 
 	std::cout << "Pac-man's view vector : (" << normalized.x << ", " << normalized.y << ")\n";
 	std::cout << "Pac-man's view vector length: (" << normalized.Length() << ")\n";
+
+	// 7 MFGD - Adding Vectors
+	Vector r(4, 0);
+	Vector d(0, -5);
+
+	v = r + d;
+	std::cout << "Pac-man's new velocity: (" << v.x << ", " << v.y << ")\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
