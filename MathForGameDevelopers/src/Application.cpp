@@ -99,6 +99,11 @@ Point Point::AddVector(Vector v)
 	return p2;
 }
 
+float DotProduct(const Vector& a, const Vector& b)
+{
+	return a.x * b.x + a.y * b.y;
+}
+
 int main(int argc, char** args)
 {
 	Point p{ 1, 0 };
@@ -140,12 +145,16 @@ int main(int argc, char** args)
 	std::cout << "Pac-man's view vector : (" << normalized.x << ", " << normalized.y << ")\n";
 	std::cout << "Pac-man's view vector length: (" << normalized.Length() << ")\n";
 
-	// 7 MFGD - Adding Vectors
+	// 7-8 MFGD - Adding Vectors
 	Vector r(4, 0);
 	Vector d(0, -5);
 
 	v = r + d;
 	std::cout << "Pac-man's new velocity: (" << v.x << ", " << v.y << ")\n";
+
+	// 9-10 MFGD - Dot Product 
+	std::cout << "DotProduct of r * r: (" << DotProduct(r, r) << ")\n";
+	std::cout << "DotProduct of r * d: (" << DotProduct(r, d) << ")\n";
 
 	std::cout << "Pause..." << std::endl;  
 	std::cin.get();
