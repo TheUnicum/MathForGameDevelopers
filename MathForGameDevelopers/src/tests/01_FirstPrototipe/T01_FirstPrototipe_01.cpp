@@ -1,6 +1,8 @@
 #include "T01_FirstPrototipe_01.h"
 #include "GLFW/glfw3.h"
 
+#include "mfgd/mfgd_Classes.h"
+
 namespace test {
 
 	T01_FirstPrototipe_01::T01_FirstPrototipe_01()
@@ -9,7 +11,9 @@ namespace test {
 		m_b_firstMouse(true),
 		m_mouse_lock(false),
 		m_b_face_culling_enabled(false), m_b_CullFaceFront(false),
-		m_b_VSync_disabled(true), m_b_VSync_disabled_i_1(false)
+		m_b_VSync_disabled(true), m_b_VSync_disabled_i_1(false),
+
+		m_enable_LERP(true)
 	{
 		// Initialize camera
 		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, -20.f);
@@ -147,11 +151,23 @@ namespace test {
 
 	void T01_FirstPrototipe_01::OnUpdate(float deltaTime)
 	{
+		if (m_enable_LERP)
+		{
+			m_box_velocity.x = Approch(m_box_GoalVelocity.x, m_box_velocity.x, deltaTime * m_box_LerpVelocity.x);
+			m_box_velocity.z = Approch(m_box_GoalVelocity.z, m_box_velocity.z, deltaTime * m_box_LerpVelocity.z);
+		}
+		else
+		{
+			m_box_velocity.x = m_box_GoalVelocity.x;
+			m_box_velocity.z = m_box_GoalVelocity.z;
+		}
+
+
+
 		m_box_position += m_box_velocity * deltaTime;
 
 		m_box_velocity += m_box_gravity * deltaTime;
 
-		std::cout << m_box_velocity.y << std::endl;
 
 		if (m_box_position.y <= 0)
 		{
@@ -298,23 +314,43 @@ namespace test {
 		ImGui::Checkbox("Enabel face culling", &m_b_face_culling_enabled);
 		ImGui::Checkbox("Cull Front Faces", &m_b_CullFaceFront);
 
+		ImGui::Text("");
+		ImGui::Checkbox("Enable LERP", &m_enable_LERP);
+		ImGui::SliderFloat3("Velo LERP:", &m_box_LerpVelocity.x, 1.0f, 15.0f);
+		ImGui::SliderFloat("Velo box:", &m_velocity, 2.0f, 10.0f);
+
 		ImGui::Checkbox("Disable VSync", &m_b_VSync_disabled);
 	}
 
 	void T01_FirstPrototipe_01::OnProcessInput(GLFWwindow * window, float deltaTime)
 	{
+		if (false)	// old version without LERP
+		{
+			//m_box_velocity = glm::vec3(0);
+			m_box_velocity.x = 0;
+			m_box_velocity.z = 0;
+			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+				m_box_velocity.z -= m_velocity;
+			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+				m_box_velocity.z += m_velocity;
+			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+				m_box_velocity.x -= m_velocity;
+			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+				m_box_velocity.x += m_velocity;
+		}
 
-		//m_box_velocity = glm::vec3(0);
-		m_box_velocity.x = 0;
-		m_box_velocity.z = 0;
+
+		m_box_GoalVelocity.x = 0;
+		m_box_GoalVelocity.z = 0;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			m_box_velocity.z -= m_velocity;
+			m_box_GoalVelocity.z = -(float)m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			m_box_velocity.z += m_velocity;
+			m_box_GoalVelocity.z = (float)m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			m_box_velocity.x -= m_velocity;
+			m_box_GoalVelocity.x = -(float)m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			m_box_velocity.x += m_velocity;
+			m_box_GoalVelocity.x = (float)m_velocity;
+
 
 		// Jumping only if at zero position
 		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))

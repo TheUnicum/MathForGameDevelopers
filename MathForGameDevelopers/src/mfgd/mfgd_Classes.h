@@ -162,3 +162,17 @@ void Test_MFGD()
 	//std::cout << "Pause..." << std::endl;
 	//std::cin.get();
 }
+
+// MFGD 12 - Smooth Move(ment) (Linear Interpolation)
+float Approch(float flGoal, float flCurrent, float dVelocity)
+{
+	float flDifference = flGoal - flCurrent;
+
+	if (flDifference > dVelocity)			// Goal is UP
+		return flCurrent + dVelocity;
+	else if (flDifference < -dVelocity)	// Goal is DOWN
+		return flCurrent - dVelocity;
+	else return flGoal;
+		
+}
+

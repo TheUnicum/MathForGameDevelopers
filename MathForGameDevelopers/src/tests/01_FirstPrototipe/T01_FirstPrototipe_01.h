@@ -70,7 +70,11 @@ namespace test {
 		glm::vec3 m_box_position = glm::vec3(0, 0, 0);
 		glm::vec3 m_box_gravity = glm::vec3(0, -20, 0);
 
-		int m_velocity = 4;
+		glm::vec3 m_box_GoalVelocity = glm::vec3(0, 0, 0);
+		glm::vec3 m_box_LerpVelocity = glm::vec3(5, 5, 5);
+
+		bool m_enable_LERP;
+		float m_velocity = 5;
 
 		void renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 

@@ -1,10 +1,7 @@
 #include <iostream>
 
-#include "mfgd/mfgd_Classes.h"
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 
 #include "opengl/Renderer.h"
 
@@ -32,7 +29,7 @@ test::Test* currentTest = nullptr;
 
 int main(int argc, char** args)
 {
-	Test_MFGD();
+	//Test_MFGD();
 
 
 	GLFWwindow* window;
