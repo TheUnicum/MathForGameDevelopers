@@ -68,12 +68,15 @@ namespace test {
 		// box_velocity
 		glm::vec3 m_box_velocity = glm::vec3(0, 0, 0);
 		glm::vec3 m_box_position = glm::vec3(0, 0, 0);
+		glm::vec3 m_box_gravity = glm::vec3(0, -20, 0);
+
 		int m_velocity = 4;
 
 		void renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 
 		glm::vec3 m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);
+		
 	};
 
 }

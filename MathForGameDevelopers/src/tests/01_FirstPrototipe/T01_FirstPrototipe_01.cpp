@@ -149,6 +149,17 @@ namespace test {
 	{
 		m_box_position += m_box_velocity * deltaTime;
 
+		m_box_velocity += m_box_gravity * deltaTime;
+
+		std::cout << m_box_velocity.y << std::endl;
+
+		if (m_box_position.y <= 0)
+		{
+			m_box_position.y = 0;
+			m_box_velocity.y = 0;
+		}
+
+
 		glm::vec3 cam = m_box_position - 3.0f * m_camera->GetCamFront() + glm::vec3(0.0f, 1.0f, 0.0f);
 		m_camera->SetCamPosition(cam);
 
@@ -293,7 +304,9 @@ namespace test {
 	void T01_FirstPrototipe_01::OnProcessInput(GLFWwindow * window, float deltaTime)
 	{
 
-		m_box_velocity = glm::vec3(0);
+		//m_box_velocity = glm::vec3(0);
+		m_box_velocity.x = 0;
+		m_box_velocity.z = 0;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			m_box_velocity.z -= m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -302,6 +315,10 @@ namespace test {
 			m_box_velocity.x -= m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 			m_box_velocity.x += m_velocity;
+
+		// Jumping only if at zero position
+		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))
+			m_box_velocity.y = 7;
 
 
 		glm::vec3 direction(0.0f);

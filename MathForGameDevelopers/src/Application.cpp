@@ -22,7 +22,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-
+float MAX_DELTA_TIME = 0.5f;
 int framebufferWidth = 0, framebufferHeight = 0;
 
 float deltaTime = 0.0f;
@@ -120,6 +120,9 @@ int main(int argc, char** args)
 			float currentFrame = glfwGetTime();
 			deltaTime = currentFrame - lastframe;
 			lastframe = currentFrame;
+
+			if (deltaTime > MAX_DELTA_TIME)
+				deltaTime = MAX_DELTA_TIME;
 
 			// Main Input------
 			processInput(window);
