@@ -1,161 +1,206 @@
 #include <iostream>
 
-class Vector
-{
-public:
-	Vector() {}
-	Vector(float x, float y)
-		: x(x), y(y) {}
+#include "mfgd/mfgd_Classes.h"
 
-	float Length() const;
-	float LengthSqr() const;
-	
-	Vector operator+(const Vector& v) const;
-	Vector operator-(const Vector& v) const;
-
-	Vector operator*(float) const;
-	Vector operator/(float) const;
-
-	Vector Normalized() const;
-
-public:
-	float x, y;
-};
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 
-class Point
-{
-public:
-	Point AddVector(Vector v);
-	
-	float x, y;
-};
+#include "opengl/Renderer.h"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
+// include tests
+#include "tests/TestClearColor.h"
+
+#include "tests/01_FirstPrototipe/T01_FirstPrototipe_01.h"
+
+// Functions Declaration
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void processInput(GLFWwindow* window);
 
 
-float Vector::Length() const
-{
-	float length;
-	length = std::sqrt(x*x + y*y);
-	return length;
-}
+int framebufferWidth = 0, framebufferHeight = 0;
 
-float Vector::LengthSqr() const
-{
-	float length;
-	length = (x*x + y*y);
-	return length;
-}
+float deltaTime = 0.0f;
+float lastframe = 0.0f;
 
-
-Vector Vector::operator+(const Vector& v) const
-{
-	return Vector(x + v.x, y + v.y);
-}
-
-Vector Vector::operator-(const Vector& v) const
-{
-	return Vector(x - v.x, y - v.y);
-}
-
-Vector Vector::operator*(float s) const
-{
-	Vector scaled;
-	scaled.x = x * s;
-	scaled.y = y * s;
-	return scaled;
-}
-
-Vector Vector::operator/(float s) const
-{
-	Vector scaled;
-	scaled.x = x / s;
-	scaled.y = y / s;
-	return scaled;
-}
-
-
-Vector Vector::Normalized() const
-{
-	Vector Normalized;
-	Normalized = (*this) / Length();
-	return Normalized;
-}
-
-Vector operator-(Point a, Point b)
-{
-	Vector v;
-	v.x = a.x - b.x;
-	v.y = a.y - b.y;
-	
-	return v;
-}
-
-Point Point::AddVector(Vector v)
-{
-	Point p2;
-	p2.x = x + v.x;
-	p2.y = y + v.y;
-
-	return p2;
-}
-
-float DotProduct(const Vector& a, const Vector& b)
-{
-	return a.x * b.x + a.y * b.y;
-}
+test::Test* currentTest = nullptr;
 
 int main(int argc, char** args)
 {
-	Point p{ 1, 0 };
-	Vector v{ 2, 3 };
+	Test_MFGD();
 
-	Point p2 = p.AddVector(v);
-	std::cout << "Result [AddVector]: (" << p2.x << ", " << p2.y << ")\n";
 
-	p = { 0,-1 };
-	Point i{ 1, 1 };
-	Point c{ 2, -1 };
-	v = p - i;
-	std::cout << "Result  [ p - i ] : (" << v.x << ", " << v.y << ")\n";
+	GLFWwindow* window;
 
-	float lenght = v.Length();
-	std::cout << "Result  [Length]  : " << lenght << "\n";
+	/* Initialize the library */
+	if (!glfwInit())
+		return -1;
 
-	// 4 MFGD - Distance Comparison
-	Vector ip = p - i;
-	Vector cp = p - c;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //GLFW_OPENGL_COMPAT_PROFILE
+	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	std::cout << "Length square of CP: " << cp.LengthSqr() << "\n";
-	std::cout << "Length square of IP: " << ip.LengthSqr() << "\n";
+	// Anti Aliasing Hint
+	// To Enable MultiSample Anti Aliasing uncomment this line before create a Window!
+	//glfwWindowHint(GLFW_SAMPLES, 4);
 
-	// 5 MFGD - Vector scaling
-	v = Vector(3, 4);
-	std::cout << "Pac-man's initial speed: " << v.Length() << "\n";
-	Vector doubled = v * 2;
-	std::cout << "Pac-man's doubeld speed: " << doubled.Length() << "\n";
-	Vector halved = v / 2;
-	std::cout << "Pac-man's halved speed: " << halved.Length() << "\n";
+	/* Create a windowed mode window and its OpenGL context */
+	window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
+	if (!window)
+	{
+		glfwTerminate();
+		return -1;
+	}
 
-	// 6 MFGD - Normalized
-	i = { 3, 4 };
-	p = { 1, 2 };
-	Vector pi = i - p;
-	Vector normalized = pi.Normalized();
+	// Added this lines to get framebuffer width/height and set Viewport
+	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	framebuffer_size_callback(window, framebufferWidth, framebufferHeight);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	std::cout << "Pac-man's view vector : (" << normalized.x << ", " << normalized.y << ")\n";
-	std::cout << "Pac-man's view vector length: (" << normalized.Length() << ")\n";
+	// Mouse callback register fuctions
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
-	// 7-8 MFGD - Adding Vectors
-	Vector r(4, 0);
-	Vector d(0, -5);
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
 
-	v = r + d;
-	std::cout << "Pac-man's new velocity: (" << v.x << ", " << v.y << ")\n";
+	glfwSwapInterval(1);	// active or deactive syncronize frame rate to 60Hz
 
-	// 9-10 MFGD - Dot Product 
-	std::cout << "DotProduct of r * r: (" << DotProduct(r, r) << ")\n";
-	std::cout << "DotProduct of r * d: (" << DotProduct(r, d) << ")\n";
+	if (glewInit() != GLEW_OK)
+		std::cout << "Error!" << std::endl;
 
-	std::cout << "Pause..." << std::endl;  
-	std::cin.get();
+	// GL info :
+	std::cout << glGetString(GL_VERSION) << std::endl;
+	int data;
+	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &data);
+	std::cout << "MAX Vertex Uniform components: " << data << std::endl;
+
+	{	// make a scope to force delete a VertexBuffer before context windows get distroyed
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		Renderer renderer;
+
+		ImGui::CreateContext();
+		ImGui_ImplGlfwGL3_Init(window, true);
+		ImGui::StyleColorsDark();
+
+		//test::Test* currentTest = nullptr;
+		test::TestMenu* testMenu = new test::TestMenu(currentTest);
+		currentTest = testMenu;
+
+
+		//-----------------------------
+		// 01_Getting_started
+		//-----------------------------
+
+		test::TestMenu* TM_01_Getting_started = new test::TestMenu(currentTest, "Getting started");
+		TM_01_Getting_started->RegisterTest<test::TestClearColor>("Clear Color test");
+
+		test::TestMenu* TM_01_FirstPrototipe = new test::TestMenu(currentTest, "01 First Prototipe");
+		TM_01_Getting_started->RegisterTest<test::T01_FirstPrototipe_01>("First Prototipe");
+
+
+		//-----------------------------
+		//-----------------------------
+		// Main Menu
+		//-----------------------------
+		//-----------------------------
+		testMenu->RegisterMenu(*TM_01_Getting_started);
+
+
+		while (!glfwWindowShouldClose(window))
+		{
+			float currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastframe;
+			lastframe = currentFrame;
+
+			// Main Input------
+			processInput(window);
+
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			renderer.Clear();
+
+			ImGui_ImplGlfwGL3_NewFrame();
+
+
+			if (currentTest)
+			{
+				currentTest->OnProcessInput(window, deltaTime);
+				currentTest->OnUpdate(deltaTime);// 0.0f);
+				currentTest->OnRender();
+				currentTest->OnRender(window);
+				ImGui::Begin("Test");
+				if (currentTest != testMenu && ImGui::Button("<-"))
+				{
+					if (dynamic_cast<test::TestMenu*>(currentTest) == nullptr)
+					{
+						delete currentTest;
+						currentTest = testMenu;
+					}
+					else
+						currentTest = dynamic_cast<test::TestMenu*>(currentTest)->getParentTest();
+				}
+				currentTest->OnImGuiRender();
+				ImGui::End();
+			}
+
+
+
+
+			ImGui::Render();
+			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+
+			glfwSwapBuffers(window);
+
+			glfwPollEvents();
+		}
+		delete currentTest;
+		if (currentTest != testMenu)
+			delete testMenu;
+	}
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
+	glfwTerminate();
+	return 0;
+
+}
+
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+// Callback funcitons definitions
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimension; notes that width and
+	// height will be significantly larger than specifies on retina display
+	glViewport(0, 0, width, height);
+	framebufferWidth = width;
+	framebufferHeight = height;
+
+	if (currentTest)
+		currentTest->framebuffer_size_callback(window, width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	//std::cout << "MAIN -> mouse_callback : ( " << xpos << " : " << ypos << " )" << std::endl;
+	if (currentTest)
+		currentTest->mouse_callback(window, xpos, ypos);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	std::cout << "scroll_callback : (" << xoffset << " : " << yoffset << ")" << std::endl;
+	if (currentTest)
+		currentTest->scroll_callback(window, xoffset, yoffset);
 }
