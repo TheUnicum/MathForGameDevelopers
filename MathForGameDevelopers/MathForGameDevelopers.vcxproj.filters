@@ -84,6 +84,9 @@
     <ClCompile Include="src\mfgd\mfgd_Classes.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\mfgd\mfgd_EulerAngle.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mfgd\mfgd_Classes.h">
@@ -165,6 +168,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\01_FirstPrototipe\T01_FirstPrototipe_01.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mfgd\mfgd_EulerAngle.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

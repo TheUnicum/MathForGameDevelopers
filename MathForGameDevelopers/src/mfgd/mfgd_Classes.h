@@ -5,9 +5,8 @@
 class Vector
 {
 public:
-	Vector() {}
-	Vector(float x, float y)
-		: x(x), y(y) {}
+	Vector();
+	Vector(float x, float y, float z);
 
 	float Length() const;
 	float LengthSqr() const;
@@ -21,7 +20,7 @@ public:
 	Vector Normalized() const;
 
 public:
-	float x, y;
+	float x, y, z;
 };
 
 
@@ -30,7 +29,7 @@ class Point
 public:
 	Point AddVector(Vector v);
 
-	float x, y;
+	float x, y, z;
 };
 
 Vector operator-(Point a, Point b);
