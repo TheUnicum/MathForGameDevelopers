@@ -9,14 +9,16 @@ namespace test {
 		: m_f_fov(45.0f),
 		m_b_depth_test_active(true), m_b_depth_test_active_i_1(false),
 		m_b_firstMouse(true),
-		m_mouse_lock(false),
+		m_mouse_lock(true),		// <--- for MFGD
 		m_b_face_culling_enabled(false), m_b_CullFaceFront(false),
 		m_b_VSync_disabled(true), m_b_VSync_disabled_i_1(false),
 
-		m_enable_LERP(true)
+		m_enable_LERP(true),
+		m_MFGD_EulerAngle_active(true)
+
 	{
 		// Initialize camera
-		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, -20.f);
+		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, -30.f);
 		//m_camera->ResetYawPitch();
 		m_camera->ProcessMouseMovement(0, 0);
 
@@ -163,7 +165,7 @@ namespace test {
 		}
 
 
-
+		// MFGD 13
 		m_box_position += m_box_velocity * deltaTime;
 
 		m_box_velocity += m_box_gravity * deltaTime;
@@ -175,9 +177,19 @@ namespace test {
 			m_box_velocity.y = 0;
 		}
 
+		if (!m_MFGD_EulerAngle_active)
+		{
+			// old version with cam class
+			glm::vec3 cam = m_box_position + glm::vec3(0, 2, 3);//  -3.0f * m_camera->GetCamFront() + glm::vec3(0.0f, 1.0f, 0.0f);
+			m_camera->SetCamPosition(cam);
+		}
+		else
+		{
+			// new version with MFGD AEuler class ( Remeber I set m_mouse_lock(true),		// <--- for MFGD on CONSTRUCTOR
+			Vector mfgd_vector = m_Box_angView.ToVector() * 4;
+			m_box_cam_position = m_box_position - glm::vec3(mfgd_vector.x, mfgd_vector.y, mfgd_vector.z);
+		}
 
-		glm::vec3 cam = m_box_position - 3.0f * m_camera->GetCamFront() + glm::vec3(0.0f, 1.0f, 0.0f);
-		m_camera->SetCamPosition(cam);
 
 	}
 
@@ -238,7 +250,20 @@ namespace test {
 		glm::mat4 proj(1.0f);
 		glm::mat4 mvp;
 
-		view = m_camera->GetViewMatrix();
+		if (!m_MFGD_EulerAngle_active)
+		{
+			//old version with cam class
+			view = m_camera->GetViewMatrix();
+		}
+		else
+		{
+			// convert MFGD Vector to glm::vec3 to retrive lookAt matrix
+			Vector mfgd_vector_temp = m_Box_angView.ToVector();
+			glm::vec3 target = m_box_cam_position + glm::vec3(mfgd_vector_temp.x, mfgd_vector_temp.y, mfgd_vector_temp.z);
+			view = glm::lookAt(m_box_cam_position, target , glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		
+
 		proj = glm::perspective(glm::radians(m_f_fov), inv_ratio_aspect, 0.1f, 100.0f);
 
 		if (m_b_face_culling_enabled)
@@ -318,6 +343,7 @@ namespace test {
 		ImGui::Checkbox("Enable LERP", &m_enable_LERP);
 		ImGui::SliderFloat3("Velo LERP:", &m_box_LerpVelocity.x, 1.0f, 15.0f);
 		ImGui::SliderFloat("Velo box:", &m_velocity, 2.0f, 10.0f);
+		ImGui::Checkbox("EULER ANGLE MFGD", &m_MFGD_EulerAngle_active);
 
 		ImGui::Checkbox("Disable VSync", &m_b_VSync_disabled);
 	}
@@ -421,6 +447,13 @@ namespace test {
 		m_lastY = (float)ypos;
 		if (!m_mouse_lock)
 			m_camera->ProcessMouseMovement(xoffset, yoffset);
+
+		// MFGD
+		float flSensitivity = 0.005f;
+		m_Box_angView.p += yoffset * flSensitivity;
+		m_Box_angView.y += xoffset * flSensitivity;
+		m_Box_angView.Normalize();
+
 	}
 	void T01_FirstPrototipe_01::renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
 	{
