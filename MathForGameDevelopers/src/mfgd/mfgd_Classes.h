@@ -19,6 +19,8 @@ public:
 
 	Vector Normalized() const;
 
+	Vector Cross(const Vector& v) const;
+
 public:
 	float x, y, z;
 };

@@ -155,15 +155,32 @@ namespace test {
 	{
 		if (m_enable_LERP)
 		{
-			m_box_velocity.x = Approch(m_box_GoalVelocity.x, m_box_velocity.x, deltaTime * m_box_LerpVelocity.x);
-			m_box_velocity.z = Approch(m_box_GoalVelocity.z, m_box_velocity.z, deltaTime * m_box_LerpVelocity.z);
+			m_box_movement.x = Approch(m_box_GoalVelocity.x, m_box_movement.x, deltaTime * m_box_LerpVelocity.x);
+			m_box_movement.z = Approch(m_box_GoalVelocity.z, m_box_movement.z, deltaTime * m_box_LerpVelocity.z);
+			//m_box_velocity.x = Approch(m_box_GoalVelocity.x, m_box_velocity.x, deltaTime * m_box_LerpVelocity.x);
+			//m_box_velocity.z = Approch(m_box_GoalVelocity.z, m_box_velocity.z, deltaTime * m_box_LerpVelocity.z);
+
 		}
 		else
 		{
-			m_box_velocity.x = m_box_GoalVelocity.x;
-			m_box_velocity.z = m_box_GoalVelocity.z;
+			m_box_movement.x = m_box_GoalVelocity.x;
+			m_box_movement.z = m_box_GoalVelocity.z;
+			//m_box_movement.x = m_box_GoalVelocity.x;
+			//m_box_velocity.z = m_box_GoalVelocity.z;
 		}
 
+		// Math for Game Developers - Character Movement 7 (Cross Product)-----------------------------------------
+		//m_box_movement
+		Vector vecForward = m_Box_angView.ToVector();
+		vecForward.y = 0;
+		vecForward.Normalized();
+
+		Vector vecUp(0.0f, 1.0f, 0.0f);
+		Vector vecRight = vecForward.Cross(vecUp);
+
+		Vector box_velocity_Temp = vecForward * (-m_box_movement.z) + vecRight * m_box_movement.x;
+		m_box_velocity = glm::vec3(box_velocity_Temp.x, box_velocity_Temp.y, box_velocity_Temp.z);
+		// ---------------------------------------------------------------------------------------------------------
 
 		// MFGD 13
 		m_box_position += m_box_velocity * deltaTime;

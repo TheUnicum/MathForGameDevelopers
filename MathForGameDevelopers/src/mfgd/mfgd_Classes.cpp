@@ -59,7 +59,14 @@ Vector Vector::Normalized() const
 	return Normalized;
 }
 
-
+Vector Vector::Cross(const Vector & v) const
+{
+	Vector c;
+	c.x = y * v.z - z * v.y;
+	c.y = z * v.x - x * v.z;
+	c.z = x * v.y - y * v.x;
+	return c;
+}
 
 // Point-----------------------------------------------
 //------------------------------------------------------

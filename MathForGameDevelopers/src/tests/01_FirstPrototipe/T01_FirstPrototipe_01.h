@@ -69,6 +69,7 @@ namespace test {
 
 		// box_velocity
 		glm::vec3 m_box_velocity = glm::vec3(0, 0, 0);
+		Vector m_box_movement = Vector(0, 0, 0);
 		glm::vec3 m_box_position = glm::vec3(0, 0, 0);
 		glm::vec3 m_box_gravity = glm::vec3(0, -20, 0);
 
