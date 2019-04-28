@@ -13,6 +13,8 @@
 
 #include "tests/01_FirstPrototipe/T01_FirstPrototipe_01.h"
 
+#include "mfgd/mfgd_Classes.h"
+
 // Functions Declaration
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -29,7 +31,7 @@ test::Test* currentTest = nullptr;
 
 int main(int argc, char** args)
 {
-	//Test_MFGD();
+	Test_MFGD();
 
 
 	GLFWwindow* window;

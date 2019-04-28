@@ -263,13 +263,13 @@ namespace test {
 		}
 
 		// Mesh 1st Cube
-		renderCube(glm::vec3(-2.0f, 0.2f, -1.0f), glm::vec3(0.2f), m_color_box, proj, view);
+		renderCube(glm::vec3(-2.0f, 0.0f, -1.0f), glm::vec3(0.2f), m_color_box, proj, view);
 
 		// Mesh 2nd Cube
-		renderCube(glm::vec3(2.f, 0.2f, -2.5f), glm::vec3(0.2f), m_color_box, proj, view);
+		renderCube(glm::vec3(2.f, 0.0f, -2.5f), glm::vec3(0.2f), m_color_box, proj, view);
 
 		// Mesh 3th Cube
-		renderCube(glm::vec3(-0.7f, 0.2f, 1.0f), glm::vec3(0.2f), m_color_box, proj, view);
+		renderCube(glm::vec3(-0.7f, 0.0f, 1.0f), glm::vec3(0.2f), m_color_box, proj, view);
 
 		// Mesh Player Box
 		renderCube(m_box_position, glm::vec3(0.2f, 0.4f, 0.2f), m_color_player, proj, view);
