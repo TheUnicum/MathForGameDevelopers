@@ -138,6 +138,11 @@ namespace test {
 		msp_mTextures2.push_back(msp_mTextureFloor);
 		m_mesh_quad = std::make_unique<Mesh>(vertices_quad_3v_3n_2t, vec_quad_indices, msp_mTextures2);
 
+
+		// --------------------- New My Boxes--------------------------
+		m_Box_01 = std::make_shared<Box>(Vector(-1.0f, 1.0f, -1.0f), Vector(0.2f, 0.2f, 0.2f));
+		m_Box_02 = std::make_shared<Box>(Vector(+1.0f, 1.0f, -1.5f), Vector(0.2f, 0.5f, 0.2f));
+
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
 	}
@@ -207,6 +212,13 @@ namespace test {
 			m_box_cam_position = m_box_position - glm::vec3(mfgd_vector.x, mfgd_vector.y, mfgd_vector.z);
 		}
 
+		
+
+		// Mybox
+		m_Box_01->Update(deltaTime);
+		m_Box_01->Gravity(m_box_gravity, deltaTime);
+		m_Box_02->Update(deltaTime);
+		m_Box_02->Gravity(m_box_gravity, deltaTime);
 
 	}
 
@@ -316,6 +328,9 @@ namespace test {
 		// Mesh Player Box
 		renderCube(m_box_position, glm::vec3(0.2f, 0.4f, 0.2f), m_color_player, proj, view);
 
+		// 
+		renderCube(m_Box_01, glm::vec3(1.0f, 0.0f, 0.0f), proj, view);
+		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view);
 
 		// Disable face culling for bidimensional object
 		GLCall(glDisable(GL_CULL_FACE));
@@ -493,6 +508,29 @@ namespace test {
 		m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
 		m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
 
+
+		// Draw MESH
+		m_mesh->Draw(m_ShaderMesh);
+	}
+	void T01_FirstPrototipe_01::renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
+	{
+		m_ShaderMesh->Bind();
+		// Model Matrix
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, box->GetPosVec3());
+		model = glm::scale(model, box->GetScaleVec3());
+		// MVP
+		// MVP
+		glm::mat4 mvp = proj * view * model;
+		m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
+		m_ShaderMesh->SetUniformMat4f("u_model", model);
+		m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
+
+		m_ShaderMesh->SetUniform3fv("u_Box_color", color);
+
+		m_ShaderMesh->SetUniform3fv("u_lightColor", m_lightColor);
+		m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
+		m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
 
 		// Draw MESH
 		m_mesh->Draw(m_ShaderMesh);

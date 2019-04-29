@@ -20,6 +20,7 @@
 #include "opengl/Model.h"
 
 #include "mfgd/mfgd_EulerAngle.h"
+#include "mfgd/Box.h"
 
 namespace test {
 
@@ -90,7 +91,8 @@ namespace test {
 		EAngle m_Box_angView;
 		bool m_MFGD_EulerAngle_active;
 
-		
+		std::shared_ptr<Box> m_Box_01, m_Box_02;
+		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 	};
 
 }
