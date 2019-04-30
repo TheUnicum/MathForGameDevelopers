@@ -93,6 +93,8 @@ namespace test {
 
 		std::shared_ptr<Box> m_Box_01, m_Box_02;
 		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
+
+		std::shared_ptr<Player> m_Player_01;
 	};
 
 }

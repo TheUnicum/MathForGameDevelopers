@@ -20,3 +20,28 @@ void Box::Gravity(glm::vec3 gravity, float dt)
 	}
 
 }
+
+void Box::Boundaries()
+{
+	if (m_position.y < m_scale.y)
+	{
+		m_position.y = m_scale.y;
+	}
+}
+
+Player::Player()
+	: Box()
+{
+}
+
+Player::Player(Vector position, Vector scale)
+	:Box(position, scale)
+{
+}
+
+void Player::SetEAngle(float pitch, float yaw, float roll)
+{
+	m_EAngle.p = pitch;
+	m_EAngle.y = yaw;
+	m_EAngle.r = roll;
+}

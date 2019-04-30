@@ -143,6 +143,9 @@ namespace test {
 		m_Box_01 = std::make_shared<Box>(Vector(-1.0f, 1.0f, -1.0f), Vector(0.2f, 0.2f, 0.2f));
 		m_Box_02 = std::make_shared<Box>(Vector(+1.0f, 1.0f, -1.5f), Vector(0.2f, 0.5f, 0.2f));
 
+		// --------------------- New My Player--------------------------
+		m_Player_01 = std::make_shared<Player>(Vector(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
+
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
 	}
@@ -165,6 +168,11 @@ namespace test {
 			//m_box_velocity.x = Approch(m_box_GoalVelocity.x, m_box_velocity.x, deltaTime * m_box_LerpVelocity.x);
 			//m_box_velocity.z = Approch(m_box_GoalVelocity.z, m_box_velocity.z, deltaTime * m_box_LerpVelocity.z);
 
+			m_Player_01->m_movement.x = Approch(m_Player_01->m_GoalVelocity.x,
+				m_Player_01->m_movement.x, deltaTime * m_Player_01->m_LerpVelocity.x);
+			m_Player_01->m_movement.y = Approch(m_Player_01->m_GoalVelocity.y,
+				m_Player_01->m_movement.y, deltaTime * m_Player_01->m_LerpVelocity.y);
+
 		}
 		else
 		{
@@ -185,6 +193,11 @@ namespace test {
 
 		Vector box_velocity_Temp = vecForward * (-m_box_movement.z) + vecRight * m_box_movement.x;
 		m_box_velocity = glm::vec3(box_velocity_Temp.x, box_velocity_Temp.y, box_velocity_Temp.z);
+
+		m_Player_01->m_velocity = box_velocity_Temp;
+		//
+		m_Player_01->m_position = m_Player_01->m_position + m_Player_01->m_velocity * deltaTime;
+
 		// ---------------------------------------------------------------------------------------------------------
 
 		// MFGD 13
@@ -220,6 +233,9 @@ namespace test {
 		m_Box_02->Update(deltaTime);
 		m_Box_02->Gravity(m_box_gravity, deltaTime);
 
+
+		// MyPlayer
+		m_Player_01->Boundaries();
 	}
 
 	void T01_FirstPrototipe_01::OnRender(GLFWwindow* window)
@@ -332,6 +348,9 @@ namespace test {
 		renderCube(m_Box_01, glm::vec3(1.0f, 0.0f, 0.0f), proj, view);
 		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view);
 
+		//
+		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
+
 		// Disable face culling for bidimensional object
 		GLCall(glDisable(GL_CULL_FACE));
 		{	// Floor
@@ -409,6 +428,17 @@ namespace test {
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 			m_box_GoalVelocity.x = (float)m_velocity;
 
+		m_Player_01->m_GoalVelocity.x = 0;
+		m_Player_01->m_GoalVelocity.z = 0;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			m_Player_01->m_GoalVelocity.z = -(float)m_velocity;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			m_Player_01->m_GoalVelocity.z = (float)m_velocity;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			m_Player_01->m_GoalVelocity.x = -(float)m_velocity;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			m_Player_01->m_GoalVelocity.x = (float)m_velocity;
+		
 
 		// Jumping only if at zero position
 		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))
@@ -485,6 +515,9 @@ namespace test {
 		m_Box_angView.p += yoffset * flSensitivity;
 		m_Box_angView.y += xoffset * flSensitivity;
 		m_Box_angView.Normalize();
+
+		// myPlayer
+		m_Player_01->SetEAngle(yoffset * flSensitivity, xoffset * flSensitivity, 0);
 
 	}
 	void T01_FirstPrototipe_01::renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
