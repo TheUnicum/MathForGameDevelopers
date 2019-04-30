@@ -163,55 +163,33 @@ namespace test {
 	{
 		if (m_enable_LERP)
 		{
-			m_box_movement.x = Approch(m_box_GoalVelocity.x, m_box_movement.x, deltaTime * m_box_LerpVelocity.x);
-			m_box_movement.z = Approch(m_box_GoalVelocity.z, m_box_movement.z, deltaTime * m_box_LerpVelocity.z);
-			//m_box_velocity.x = Approch(m_box_GoalVelocity.x, m_box_velocity.x, deltaTime * m_box_LerpVelocity.x);
-			//m_box_velocity.z = Approch(m_box_GoalVelocity.z, m_box_velocity.z, deltaTime * m_box_LerpVelocity.z);
-
 			m_Player_01->m_movement.x = Approch(m_Player_01->m_GoalVelocity.x,
 				m_Player_01->m_movement.x, deltaTime * m_Player_01->m_LerpVelocity.x);
-			m_Player_01->m_movement.y = Approch(m_Player_01->m_GoalVelocity.y,
-				m_Player_01->m_movement.y, deltaTime * m_Player_01->m_LerpVelocity.y);
-
+			m_Player_01->m_movement.z = Approch(m_Player_01->m_GoalVelocity.z,
+				m_Player_01->m_movement.z, deltaTime * m_Player_01->m_LerpVelocity.z);
 		}
 		else
 		{
-			m_box_movement.x = m_box_GoalVelocity.x;
-			m_box_movement.z = m_box_GoalVelocity.z;
-			//m_box_movement.x = m_box_GoalVelocity.x;
-			//m_box_velocity.z = m_box_GoalVelocity.z;
+			m_Player_01->m_movement.x = m_Player_01->m_GoalVelocity.x;
+			m_Player_01->m_movement.z = m_Player_01->m_GoalVelocity.z;
 		}
 
 		// Math for Game Developers - Character Movement 7 (Cross Product)-----------------------------------------
-		//m_box_movement
-		Vector vecForward = m_Box_angView.ToVector();
+		Vector vecForward = m_Player_01->m_EAngle.ToVector();	// m_Box_angView.ToVector();
 		vecForward.y = 0;
 		vecForward.Normalized();
 
 		Vector vecUp(0.0f, 1.0f, 0.0f);
 		Vector vecRight = vecForward.Cross(vecUp);
 
-		Vector box_velocity_Temp = vecForward * (-m_box_movement.z) + vecRight * m_box_movement.x;
-		m_box_velocity = glm::vec3(box_velocity_Temp.x, box_velocity_Temp.y, box_velocity_Temp.z);
-
+		Vector box_velocity_Temp = vecForward * (-m_Player_01->m_movement.z) + vecRight * m_Player_01->m_movement.x;
+		
 		m_Player_01->m_velocity = box_velocity_Temp;
-		//
 		m_Player_01->m_position = m_Player_01->m_position + m_Player_01->m_velocity * deltaTime;
+		//m_Player_01->Gravity(m_box_gravity, deltaTime);
+
 
 		// ---------------------------------------------------------------------------------------------------------
-
-		// MFGD 13
-		m_box_position += m_box_velocity * deltaTime;
-
-		m_box_velocity += m_box_gravity * deltaTime;
-
-
-		if (m_box_position.y <= 0)
-		{
-			m_box_position.y = 0;
-			m_box_velocity.y = 0;
-		}
-
 		if (!m_MFGD_EulerAngle_active)
 		{
 			// old version with cam class
@@ -221,18 +199,14 @@ namespace test {
 		else
 		{
 			// new version with MFGD AEuler class ( Remeber I set m_mouse_lock(true),		// <--- for MFGD on CONSTRUCTOR
-			Vector mfgd_vector = m_Box_angView.ToVector() * 4;
-			m_box_cam_position = m_box_position - glm::vec3(mfgd_vector.x, mfgd_vector.y, mfgd_vector.z);
-		}
-
-		
+			m_Player_01->m_Cam_Position = m_Player_01->m_position - m_Player_01->m_EAngle.ToVector() * 4;
+		}	
 
 		// Mybox
 		m_Box_01->Update(deltaTime);
 		m_Box_01->Gravity(m_box_gravity, deltaTime);
 		m_Box_02->Update(deltaTime);
 		m_Box_02->Gravity(m_box_gravity, deltaTime);
-
 
 		// MyPlayer
 		m_Player_01->Boundaries();
@@ -302,10 +276,10 @@ namespace test {
 		}
 		else
 		{
-			// convert MFGD Vector to glm::vec3 to retrive lookAt matrix
-			Vector mfgd_vector_temp = m_Box_angView.ToVector();
-			glm::vec3 target = m_box_cam_position + glm::vec3(mfgd_vector_temp.x, mfgd_vector_temp.y, mfgd_vector_temp.z);
-			view = glm::lookAt(m_box_cam_position, target , glm::vec3(0.0f, 1.0f, 0.0f));
+			Vector vec_target = m_Player_01->m_EAngle.ToVector();
+			glm::vec3 target_Vec3_ = glm::vec3(vec_target.x, vec_target.y, vec_target.z);
+			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_Cam_Position.x, m_Player_01->m_Cam_Position.y, m_Player_01->m_Cam_Position.z);
+			view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
 		}
 		
 
@@ -392,7 +366,8 @@ namespace test {
 
 		ImGui::Text("");
 		ImGui::Checkbox("Enable LERP", &m_enable_LERP);
-		ImGui::SliderFloat3("Velo LERP:", &m_box_LerpVelocity.x, 1.0f, 15.0f);
+		//ImGui::SliderFloat3("Velo LERP:", &m_box_LerpVelocity.x, 1.0f, 15.0f);
+		ImGui::SliderFloat3("Velo LERP:", &m_Player_01->m_LerpVelocity.x, 1.0f, 15.0f);
 		ImGui::SliderFloat("Velo box:", &m_velocity, 2.0f, 10.0f);
 		ImGui::Checkbox("EULER ANGLE MFGD", &m_MFGD_EulerAngle_active);
 
@@ -401,32 +376,6 @@ namespace test {
 
 	void T01_FirstPrototipe_01::OnProcessInput(GLFWwindow * window, float deltaTime)
 	{
-		if (false)	// old version without LERP
-		{
-			//m_box_velocity = glm::vec3(0);
-			m_box_velocity.x = 0;
-			m_box_velocity.z = 0;
-			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-				m_box_velocity.z -= m_velocity;
-			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-				m_box_velocity.z += m_velocity;
-			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-				m_box_velocity.x -= m_velocity;
-			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-				m_box_velocity.x += m_velocity;
-		}
-
-
-		m_box_GoalVelocity.x = 0;
-		m_box_GoalVelocity.z = 0;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			m_box_GoalVelocity.z = -(float)m_velocity;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			m_box_GoalVelocity.z = (float)m_velocity;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			m_box_GoalVelocity.x = -(float)m_velocity;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			m_box_GoalVelocity.x = (float)m_velocity;
 
 		m_Player_01->m_GoalVelocity.x = 0;
 		m_Player_01->m_GoalVelocity.z = 0;
@@ -439,11 +388,9 @@ namespace test {
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 			m_Player_01->m_GoalVelocity.x = (float)m_velocity;
 		
-
 		// Jumping only if at zero position
 		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))
 			m_box_velocity.y = 7;
-
 
 		glm::vec3 direction(0.0f);
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -512,12 +459,10 @@ namespace test {
 
 		// MFGD
 		float flSensitivity = 0.005f;
-		m_Box_angView.p += yoffset * flSensitivity;
-		m_Box_angView.y += xoffset * flSensitivity;
-		m_Box_angView.Normalize();
-
-		// myPlayer
-		m_Player_01->SetEAngle(yoffset * flSensitivity, xoffset * flSensitivity, 0);
+		m_Player_01->m_EAngle.p += yoffset * flSensitivity;
+		m_Player_01->m_EAngle.y += xoffset * flSensitivity;
+		std::cout << m_Player_01->m_EAngle.p << std::endl;
+		m_Player_01->m_EAngle.Normalize();
 
 	}
 	void T01_FirstPrototipe_01::renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view)

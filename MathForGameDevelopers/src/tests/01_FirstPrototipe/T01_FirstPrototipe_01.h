@@ -74,11 +74,6 @@ namespace test {
 		glm::vec3 m_box_position = glm::vec3(0, 0, 0);
 		glm::vec3 m_box_gravity = glm::vec3(0, -20, 0);
 
-		glm::vec3 m_box_GoalVelocity = glm::vec3(0, 0, 0);
-		glm::vec3 m_box_LerpVelocity = glm::vec3(5, 5, 5);
-
-		glm::vec3 m_box_cam_position = glm::vec3(0, 0, 0);
-
 		bool m_enable_LERP;
 		float m_velocity = 5;
 
@@ -88,7 +83,7 @@ namespace test {
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);
 
 		// Euler Angle
-		EAngle m_Box_angView;
+		//EAngle m_Box_angView;
 		bool m_MFGD_EulerAngle_active;
 
 		std::shared_ptr<Box> m_Box_01, m_Box_02;

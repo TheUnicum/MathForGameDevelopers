@@ -38,6 +38,7 @@ public:
 
 	void SetEAngle(float pitch, float yaw, float roll);
 private:
+public:
 	EAngle m_EAngle;
 	
 public:
@@ -45,4 +46,5 @@ public:
 	Vector m_movement;
 	Vector m_GoalVelocity;
 	Vector m_LerpVelocity = Vector(5, 5, 5);
+	Vector m_Cam_Position = Vector(0, 0, 0);
 };
