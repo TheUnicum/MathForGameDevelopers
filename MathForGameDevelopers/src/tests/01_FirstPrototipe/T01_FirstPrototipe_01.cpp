@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 
 #include "mfgd/mfgd_Classes.h"
+#include "mfgd/AABB.h"
 
 namespace test {
 
@@ -371,7 +372,17 @@ namespace test {
 		{
 			Vector p_start = m_Player_01->m_position;
 			Vector p_end = m_Player_01->m_EAngle.ToVector() * 10;
+			
+			Vector vecIntersection;
+			//TraceLine
+			
+			
 			renderShot(p_start, p_start + p_end, proj, view);
+
+			// Pop at the end if not collision
+			Vector pos_end = p_start + p_end;
+			renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f),  glm::vec3(1.0, 1.0, .0f), proj, view);
+
 		}
 
 
@@ -534,6 +545,31 @@ namespace test {
 		// Draw MESH
 		m_mesh->Draw(m_ShaderMesh);
 	}
+
+	void T01_FirstPrototipe_01::renderPop(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
+	{
+		m_ShaderMesh->Bind();
+		// Model Matrix
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, position);
+		model = glm::scale(model, scale);
+		// MVP
+		glm::mat4 mvp = proj * view * model;
+		m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
+		m_ShaderMesh->SetUniformMat4f("u_model", model);
+		m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
+
+		m_ShaderMesh->SetUniform3fv("u_Box_color", color);
+
+		m_ShaderMesh->SetUniform3fv("u_lightColor", m_lightColor);
+		m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
+		m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
+
+
+		// Draw MESH
+		m_mesh->Draw(m_ShaderMesh);
+	}
+
 	void T01_FirstPrototipe_01::renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
 	{
 		m_ShaderMesh->Bind();

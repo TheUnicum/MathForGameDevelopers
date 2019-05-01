@@ -78,6 +78,7 @@ namespace test {
 		float m_velocity = 5;
 
 		void renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
+		void renderPop(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 
 		glm::vec3 m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);

@@ -7,6 +7,7 @@ class Vector
 public:
 	Vector();
 	Vector(float x, float y, float z);
+	Vector(const class Point& p);
 
 	float Length() const;
 	float LengthSqr() const;
@@ -22,7 +23,14 @@ public:
 	Vector Cross(const Vector& v) const;
 
 public:
-	float x, y, z;
+	//float x, y, z;
+	union {
+		struct
+		{
+			float x, y, z;
+		};
+		float v[3];
+	};
 };
 
 
@@ -33,6 +41,9 @@ public:
 	Point(float x, float y, float z);
 
 	Point AddVector(Vector v);
+
+	Point operator+(const Vector& v) const;
+	Point operator-(const Vector& v) const;
 
 	float x, y, z;
 };

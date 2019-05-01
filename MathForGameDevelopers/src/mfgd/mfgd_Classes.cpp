@@ -10,6 +10,9 @@ Vector::Vector()
 Vector::Vector(float x, float y, float z)
 	: x(x), y(y), z(z) {}
 
+Vector::Vector(const Point & p)
+	: x(p.x), y(p.y), z(p.z) {}
+
 float Vector::Length() const
 {
 	float length;
@@ -92,6 +95,16 @@ Point Point::AddVector(Vector v)
 	p2.y = y + v.y;
 	p2.z = z + v.z;
 	return p2;
+}
+
+Point Point::operator+(const Vector & v) const
+{
+	return Point(x + v.x, y + v.y, z + v.z);
+}
+
+Point Point::operator-(const Vector & v) const
+{
+	return Point(x - v.x, y - v.y, z - v.z);
 }
 
 float DotProduct(const Vector& a, const Vector& b)

@@ -179,5 +179,8 @@
     <ClInclude Include="src\mfgd\Box.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="src\mfgd\AABB.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
