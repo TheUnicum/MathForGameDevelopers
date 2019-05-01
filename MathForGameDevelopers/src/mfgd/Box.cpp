@@ -18,7 +18,19 @@ void Box::Gravity(glm::vec3 gravity, float dt)
 		m_position.y = m_scale.y;
 		m_velocity.y = - m_velocity.y;
 	}
+}
 
+void Box::Gravity(Vector gravity, float dt)
+{
+
+	std::cout << m_velocity.y << std::endl; 
+
+	m_velocity = m_velocity + gravity * dt;
+	if (m_position.y <= m_scale.y)
+	{
+		m_position.y = m_scale.y;
+		m_velocity.y = 0;
+	}
 }
 
 void Box::Boundaries()

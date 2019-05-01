@@ -75,7 +75,7 @@ namespace test {
 		std::vector<unsigned int> indices0;
 		m_mesh = std::make_unique<Mesh>(vertices_3v_3n_2t, indices0, msp_Textures);
 		m_ShaderMesh = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S01_FirstPrototipe_01.Shader");
-
+		m_ShaderLine = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S00_Light.Shader");
 
 
 		// NEW mesh-  index quad----------------------------------------------------------------------------------
@@ -146,6 +146,7 @@ namespace test {
 		// --------------------- New My Player--------------------------
 		m_Player_01 = std::make_shared<Player>(Vector(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
 
+
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
 	}
@@ -173,6 +174,7 @@ namespace test {
 			m_Player_01->m_movement.x = m_Player_01->m_GoalVelocity.x;
 			m_Player_01->m_movement.z = m_Player_01->m_GoalVelocity.z;
 		}
+		m_Player_01->m_movement.y = m_Player_01->m_GoalVelocity.y;
 
 		// Math for Game Developers - Character Movement 7 (Cross Product)-----------------------------------------
 		Vector vecForward = m_Player_01->m_EAngle.ToVector();	// m_Box_angView.ToVector();
@@ -186,7 +188,8 @@ namespace test {
 		
 		m_Player_01->m_velocity = box_velocity_Temp;
 		m_Player_01->m_position = m_Player_01->m_position + m_Player_01->m_velocity * deltaTime;
-		//m_Player_01->Gravity(m_box_gravity, deltaTime);
+		
+		//m_Player_01->Gravity(m_Player_01->m_Gravity, deltaTime);
 
 
 		// ---------------------------------------------------------------------------------------------------------
@@ -278,7 +281,22 @@ namespace test {
 		{
 			Vector vec_target = m_Player_01->m_EAngle.ToVector();
 			glm::vec3 target_Vec3_ = glm::vec3(vec_target.x, vec_target.y, vec_target.z);
-			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_Cam_Position.x, m_Player_01->m_Cam_Position.y, m_Player_01->m_Cam_Position.z);
+
+			Vector vecUp(0.0f, 1.0f, 0.0f);
+			Vector vecRight = vec_target.Cross(vecUp);
+			Vector vecFoward = vecUp.Cross(vecRight);
+			vecRight = vecRight.Normalized();
+			vecFoward = vecFoward.Normalized();
+
+			glm::vec3 Vec3DirRight = glm::vec3(vecRight.x, 0.0f, vecRight.z) * 0.5f;
+			glm::vec3 Vec3DirForward = glm::vec3(vecFoward.x, 0.0f, vecFoward.z) * -.5f;
+
+			/*
+			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_Cam_Position.x, m_Player_01->m_Cam_Position.y, m_Player_01->m_Cam_Position.z)
+				+ glm::vec3(0.0, 0.75f, 0.0) + Vec3DirRight ;
+			*/
+			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_position.x, m_Player_01->m_position.y, m_Player_01->m_position.z) 
+				+ glm::vec3(0.0, 0.5f, 0.0) + Vec3DirRight + Vec3DirForward;
 			view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
 		}
 		
@@ -347,6 +365,17 @@ namespace test {
 
 			m_mesh_quad->Draw(m_ShaderMesh);
 		}
+
+
+		if (m_Shot_active)
+		{
+			Vector p_start = m_Player_01->m_position;
+			Vector p_end = m_Player_01->m_EAngle.ToVector() * 10;
+			renderShot(p_start, p_start + p_end, proj, view);
+		}
+
+
+
 	}
 
 	void T01_FirstPrototipe_01::OnImGuiRender()
@@ -379,6 +408,7 @@ namespace test {
 
 		m_Player_01->m_GoalVelocity.x = 0;
 		m_Player_01->m_GoalVelocity.z = 0;
+		m_Player_01->m_GoalVelocity.y = 0;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			m_Player_01->m_GoalVelocity.z = -(float)m_velocity;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -391,6 +421,9 @@ namespace test {
 		// Jumping only if at zero position
 		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))
 			m_box_velocity.y = 7;
+
+		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_Player_01->m_velocity.y) < 0.25))
+			m_Player_01->m_GoalVelocity.y = 7;
 
 		glm::vec3 direction(0.0f);
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -432,6 +465,18 @@ namespace test {
 		}
 		else
 			m_key_pressed = false;
+
+
+
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			//std::cout << "mouse right clicked" << std::endl;
+			m_Shot_active = true;
+		}
+		else
+			m_Shot_active = false;
+
+
 	}
 
 	void T01_FirstPrototipe_01::framebuffer_size_callback(GLFWwindow * window, int width, int height)
@@ -461,7 +506,6 @@ namespace test {
 		float flSensitivity = 0.005f;
 		m_Player_01->m_EAngle.p += yoffset * flSensitivity;
 		m_Player_01->m_EAngle.y += xoffset * flSensitivity;
-		std::cout << m_Player_01->m_EAngle.p << std::endl;
 		m_Player_01->m_EAngle.Normalize();
 
 	}
@@ -513,6 +557,39 @@ namespace test {
 		// Draw MESH
 		m_mesh->Draw(m_ShaderMesh);
 	}
+
+	void T01_FirstPrototipe_01::renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view)
+	{
+		float positions[] = {
+			p_start.x, p_start.y, p_start.z,
+			p_end.x, p_end.y, p_end.z,
+		};
+
+		VertexBuffer VertexBuffer(positions, 2 * (3) * sizeof(float));
+
+		VertexBufferLayout layout;
+		layout.Push<float>(3);
+		VertexArray VAO;
+		VAO.AddBuffer(VertexBuffer, layout);
+
+		// Molde
+		glm::mat4 model = glm::mat4(1.0f);
+
+		m_ShaderLine->Bind();
+		//MVP
+		glm::mat4 mvp = proj * view * model;
+		m_ShaderLine->SetUniformMat4f("u_mvp", mvp);
+
+		//m_Shader = std::make_unique<Shader>("src/tests/01_Getting_started/05_Shader/S05_Shader_01.Shader");
+		glm::vec3 color_shot = glm::vec3(1.0f, 0.f, 0.0f);
+		m_ShaderLine->SetUniform3fv("u_lightColor", color_shot);
+
+		VAO.Bind();
+		glLineWidth(2.0);
+		GLCall(glDrawArrays(GL_LINE_STRIP, 0, 2));
+
+	}
+
 }
 
 

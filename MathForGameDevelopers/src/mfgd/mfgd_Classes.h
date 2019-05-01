@@ -29,6 +29,9 @@ public:
 class Point
 {
 public:
+	Point();
+	Point(float x, float y, float z);
+
 	Point AddVector(Vector v);
 
 	float x, y, z;

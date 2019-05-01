@@ -16,6 +16,7 @@ public:
 
 	void Update(float dt);
 	void Gravity(glm::vec3 gravity, float dt);
+	void Gravity(Vector gravity, float dt);
 	void Boundaries();
 
 	inline Vector GetPosition() const { return m_position; }
@@ -47,4 +48,5 @@ public:
 	Vector m_GoalVelocity;
 	Vector m_LerpVelocity = Vector(5, 5, 5);
 	Vector m_Cam_Position = Vector(0, 0, 0);
+	Vector m_Gravity = Vector(0, -20, 0);
 };

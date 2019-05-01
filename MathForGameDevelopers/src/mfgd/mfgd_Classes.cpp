@@ -79,6 +79,12 @@ Vector operator-(Point a, Point b)
 	return v;
 }
 
+Point::Point()
+	: x(0), y(0), z(0) {}
+
+Point::Point(float x, float y, float z)
+	: x(x), y(y), z(z) {}
+
 Point Point::AddVector(Vector v)
 {
 	Point p2;

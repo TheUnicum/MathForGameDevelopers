@@ -51,7 +51,7 @@ namespace test {
 
 		// MESH members
 		std::unique_ptr<Mesh> m_mesh, m_mesh_quad, m_mesh_grass, m_mesh_grass_Clamped;
-		std::shared_ptr<Shader> m_ShaderMesh;
+		std::shared_ptr<Shader> m_ShaderMesh, m_ShaderLine;
 		std::shared_ptr<Texture> msp_mTexture0, msp_mTexture1, msp_mTexture2;
 		std::vector<std::shared_ptr<Texture>> msp_Textures;
 		// Floor
@@ -90,6 +90,10 @@ namespace test {
 		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 
 		std::shared_ptr<Player> m_Player_01;
+
+		void renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view);
+
+		bool m_Shot_active;
 	};
 
 }
