@@ -67,11 +67,7 @@ namespace test {
 		// Disable VSync 
 		bool m_b_VSync_disabled, m_b_VSync_disabled_i_1;
 
-
-		// box_velocity
-		glm::vec3 m_box_velocity = glm::vec3(0, 0, 0);
-		Vector m_box_movement = Vector(0, 0, 0);
-		glm::vec3 m_box_position = glm::vec3(0, 0, 0);
+		// MFGD
 		glm::vec3 m_box_gravity = glm::vec3(0, -20, 0);
 
 		bool m_enable_LERP;
@@ -83,10 +79,6 @@ namespace test {
 		glm::vec3 m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);
 
-		// Euler Angle
-		//EAngle m_Box_angView;
-		bool m_MFGD_EulerAngle_active;
-
 		std::shared_ptr<Box> m_Box_01, m_Box_02;
 		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 
@@ -95,7 +87,7 @@ namespace test {
 		void renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view);
 
 		bool m_Shot_active;
-		std::shared_ptr<Box> m_Target_1;
+		std::shared_ptr<Box> m_Target_1, m_Target_2;
 
 		// Trace a line through the world to simulate a bullet
 		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);

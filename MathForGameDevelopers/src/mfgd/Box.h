@@ -13,7 +13,7 @@ class Box
 {
 public:
 	Box();
-	Box(Vector position, Vector scale);
+	Box(Point position, Vector scale);
 
 	void Update(float dt);
 	void Gravity(glm::vec3 gravity, float dt);
@@ -26,19 +26,19 @@ public:
 
 private:
 public:
-	Vector m_velocity;
-	Vector m_position;
-
+	Point m_position;
 	Vector m_scale;
+
 	AABB m_aabbSize;
-	Point m_positionT;
+
+	Vector m_velocity;
 };
 
 class Player : public Box
 {
 public:
 	Player();
-	Player(Vector position, Vector scale);
+	Player(Point position, Vector scale);
 
 	void SetEAngle(float pitch, float yaw, float roll);
 private:
@@ -46,7 +46,6 @@ public:
 	EAngle m_EAngle;
 	
 public:
-	Vector m_velocity;
 	Vector m_movement;
 	Vector m_GoalVelocity;
 	Vector m_LerpVelocity = Vector(5, 5, 5);

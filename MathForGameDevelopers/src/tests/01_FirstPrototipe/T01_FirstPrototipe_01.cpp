@@ -14,9 +14,7 @@ namespace test {
 		m_b_face_culling_enabled(false), m_b_CullFaceFront(false),
 		m_b_VSync_disabled(true), m_b_VSync_disabled_i_1(false),
 
-		m_enable_LERP(true),
-		m_MFGD_EulerAngle_active(true)
-
+		m_enable_LERP(true)
 	{
 		// Initialize camera
 		m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, -30.f);
@@ -141,19 +139,25 @@ namespace test {
 
 
 		// --------------------- New My Boxes--------------------------
-		m_Box_01 = std::make_shared<Box>(Vector(-1.0f, 1.0f, -1.0f), Vector(0.2f, 0.2f, 0.2f));
-		m_Box_02 = std::make_shared<Box>(Vector(+1.0f, 1.0f, -1.5f), Vector(0.2f, 0.5f, 0.2f));
+		m_Box_01 = std::make_shared<Box>(Point(-1.0f, 1.0f, -1.0f), Vector(0.2f, 0.2f, 0.2f));
+		m_Box_01->m_aabbSize.vecMin = Vector(0.2f, 0.2f, 0.2f);
+		m_Box_01->m_aabbSize.vecMax = Vector(-0.2f, -0.2f, -0.2f);
+
+		m_Box_02 = std::make_shared<Box>(Point(+1.0f, 1.0f, -1.5f), Vector(0.2f, 0.5f, 0.2f));
+		m_Box_02->m_aabbSize.vecMin = Vector(0.2f, 0.5f, 0.2f);
+		m_Box_02->m_aabbSize.vecMax = Vector(-0.2f, -0.5f, -0.2f);
 
 		// --------------------- New My Player--------------------------
-		m_Player_01 = std::make_shared<Player>(Vector(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
+		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
 
 		// --------------------- first Target with AABBB ---------------
-		m_Target_1 = std::make_shared<Box>(Vector(+6.0f, 0.0f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
-
-		m_Target_1->m_positionT = Point(+6.0f, 0.0f, 4.0f);
+		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 0.0f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
 		m_Target_1->m_aabbSize.vecMin = Vector(-1, -1, -1);
 		m_Target_1->m_aabbSize.vecMax = Vector(1, 1, 1);
-		
+	
+		m_Target_2 = std::make_shared<Box>(Point(+2.0f, 0.25f, -3.0f), Vector(0.2f, 0.5f, 0.2f));
+		m_Target_2->m_aabbSize.vecMin = Vector(-0.2f, -0.5f, -0.2f);
+		m_Target_2->m_aabbSize.vecMax = Vector(0.2f, 0.5f, 0.2f);
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
@@ -199,20 +203,9 @@ namespace test {
 		
 		//m_Player_01->Gravity(m_Player_01->m_Gravity, deltaTime);
 
-
-		// ---------------------------------------------------------------------------------------------------------
-		if (!m_MFGD_EulerAngle_active)
-		{
-			// old version with cam class
-			glm::vec3 cam = m_box_position + glm::vec3(0, 2, 3);//  -3.0f * m_camera->GetCamFront() + glm::vec3(0.0f, 1.0f, 0.0f);
-			m_camera->SetCamPosition(cam);
-		}
-		else
-		{
-			// new version with MFGD AEuler class ( Remeber I set m_mouse_lock(true),		// <--- for MFGD on CONSTRUCTOR
-			m_Player_01->m_Cam_Position = m_Player_01->m_position - m_Player_01->m_EAngle.ToVector() * 4;
-		}	
-
+		// new version with MFGD AEuler class ( Remeber I set m_mouse_lock(true),		// <--- for MFGD on CONSTRUCTOR
+		m_Player_01->m_Cam_Position = m_Player_01->m_position - m_Player_01->m_EAngle.ToVector() * 4;
+	
 		// Mybox
 		m_Box_01->Update(deltaTime);
 		m_Box_01->Gravity(m_box_gravity, deltaTime);
@@ -280,36 +273,24 @@ namespace test {
 		glm::mat4 proj(1.0f);
 		glm::mat4 mvp;
 
-		if (!m_MFGD_EulerAngle_active)
-		{
-			//old version with cam class
-			view = m_camera->GetViewMatrix();
-		}
-		else
-		{
-			Vector vec_target = m_Player_01->m_EAngle.ToVector();
-			glm::vec3 target_Vec3_ = glm::vec3(vec_target.x, vec_target.y, vec_target.z);
 
-			Vector vecUp(0.0f, 1.0f, 0.0f);
-			Vector vecRight = vec_target.Cross(vecUp);
-			Vector vecFoward = vecUp.Cross(vecRight);
-			vecRight = vecRight.Normalized();
-			vecFoward = vecFoward.Normalized();
+		Vector vec_target = m_Player_01->m_EAngle.ToVector();
+		glm::vec3 target_Vec3_ = glm::vec3(vec_target.x, vec_target.y, vec_target.z);
 
-			glm::vec3 Vec3DirRight = glm::vec3(vecRight.x, 0.0f, vecRight.z) * 0.5f;
-			glm::vec3 Vec3DirForward = glm::vec3(vecFoward.x, 0.0f, vecFoward.z) * -.5f;
+		Vector vecUp(0.0f, 1.0f, 0.0f);
+		Vector vecRight = vec_target.Cross(vecUp);
+		Vector vecFoward = vecUp.Cross(vecRight);
+		vecRight = vecRight.Normalized();
+		vecFoward = vecFoward.Normalized();
 
-			/*
-			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_Cam_Position.x, m_Player_01->m_Cam_Position.y, m_Player_01->m_Cam_Position.z)
-				+ glm::vec3(0.0, 0.75f, 0.0) + Vec3DirRight ;
-			*/
-			glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_position.x, m_Player_01->m_position.y, m_Player_01->m_position.z) 
+		glm::vec3 Vec3DirRight = glm::vec3(vecRight.x, 0.0f, vecRight.z) * 0.5f;
+		glm::vec3 Vec3DirForward = glm::vec3(vecFoward.x, 0.0f, vecFoward.z) * -.5f;
+
+		glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_position.x, m_Player_01->m_position.y, m_Player_01->m_position.z) 
 				+ glm::vec3(0.0, 0.5f, 0.0) + Vec3DirRight + Vec3DirForward;
-			view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
-		}
-		
-
+		view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
 		proj = glm::perspective(glm::radians(m_f_fov), inv_ratio_aspect, 0.1f, 100.0f);
+
 
 		if (m_b_face_culling_enabled)
 		{
@@ -332,27 +313,16 @@ namespace test {
 			GLCall(glFrontFace(GL_CCW));
 		}
 
-		// Mesh 1st Cube
-		renderCube(glm::vec3(-2.0f, 0.0f, -1.0f), glm::vec3(0.2f), m_color_box, proj, view);
-
-		// Mesh 2nd Cube
-		renderCube(glm::vec3(2.f, 0.0f, -2.5f), glm::vec3(0.2f), m_color_box, proj, view);
-
-		// Mesh 3th Cube
-		renderCube(glm::vec3(-0.7f, 0.0f, 1.0f), glm::vec3(0.2f), m_color_box, proj, view);
-
-		// Mesh Player Box
-		renderCube(m_box_position, glm::vec3(0.2f, 0.4f, 0.2f), m_color_player, proj, view);
-
 		// 
-		renderCube(m_Box_01, glm::vec3(1.0f, 0.0f, 0.0f), proj, view);
+		renderCube(m_Box_01, m_color_box, proj, view);
 		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view);
 
 		//
 		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
 
-		//
+		// Target Box
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view);
+		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view);
 
 
 		// Disable face culling for bidimensional object
@@ -394,7 +364,7 @@ namespace test {
 
 				// Pop at the end if not collision
 				Vector pos_end = vecIntersection;
-				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f), glm::vec3(1.0, 1.0, .0f), proj, view);
+				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.05f), glm::vec3(1.0, 1.0, .0f), proj, view);
 			}
 			else
 			{
@@ -402,17 +372,9 @@ namespace test {
 
 				// Pop at the end if not collision
 				Vector pos_end = p_start + p_end;
-				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f), glm::vec3(1.0, 1.0, .0f), proj, view);
-
 			}
-			
-			
-
 
 		}
-
-
-
 	}
 
 	void T01_FirstPrototipe_01::OnImGuiRender()
@@ -435,7 +397,6 @@ namespace test {
 		//ImGui::SliderFloat3("Velo LERP:", &m_box_LerpVelocity.x, 1.0f, 15.0f);
 		ImGui::SliderFloat3("Velo LERP:", &m_Player_01->m_LerpVelocity.x, 1.0f, 15.0f);
 		ImGui::SliderFloat("Velo box:", &m_velocity, 2.0f, 10.0f);
-		ImGui::Checkbox("EULER ANGLE MFGD", &m_MFGD_EulerAngle_active);
 
 		ImGui::Checkbox("Disable VSync", &m_b_VSync_disabled);
 	}
@@ -456,9 +417,6 @@ namespace test {
 			m_Player_01->m_GoalVelocity.x = (float)m_velocity;
 		
 		// Jumping only if at zero position
-		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_box_velocity.y) < 0.25))
-			m_box_velocity.y = 7;
-
 		if ((glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) && (abs(m_Player_01->m_velocity.y) < 0.25))
 			m_Player_01->m_GoalVelocity.y = 7;
 
@@ -652,6 +610,7 @@ namespace test {
 
 	}
 
+	// Trace a line through the world to simulate, eg, a bullet
 	bool T01_FirstPrototipe_01::TraceLine(const Vector & v0, const Vector & v1, Vector & vecIntersection)
 	{
 		float flLowestFraction = 1;
@@ -659,13 +618,29 @@ namespace test {
 		Vector vecTestIntersection;
 		float flTestFraction;
 
-		if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_positionT, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
 			vecIntersection = vecTestIntersection;
 			flLowestFraction = flTestFraction;
 		}
 
+		if (LineAABBIntersection(m_Target_2->m_aabbSize + m_Target_2->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
 
+		if (LineAABBIntersection(m_Box_01->m_aabbSize + m_Box_01->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
+
+		if (LineAABBIntersection(m_Box_02->m_aabbSize + m_Box_02->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
 
 		if (flLowestFraction < 1)
 			return true;

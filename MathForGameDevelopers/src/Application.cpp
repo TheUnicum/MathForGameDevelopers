@@ -116,7 +116,7 @@ int main(int argc, char** args)
 
 		while (!glfwWindowShouldClose(window))
 		{
-			float currentFrame = glfwGetTime();
+			float currentFrame = (float)glfwGetTime();
 			deltaTime = currentFrame - lastframe;
 			lastframe = currentFrame;
 

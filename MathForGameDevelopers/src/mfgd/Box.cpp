@@ -1,7 +1,7 @@
 #include "Box.h"
 
 Box::Box() {}
-Box::Box(Vector position, Vector scale)
+Box::Box(Point position, Vector scale)
 	: m_position(position), m_scale(scale) {}
 
 void Box::Update(float dt)
@@ -46,7 +46,7 @@ Player::Player()
 {
 }
 
-Player::Player(Vector position, Vector scale)
+Player::Player(Point position, Vector scale)
 	:Box(position, scale)
 {
 }
