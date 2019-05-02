@@ -147,6 +147,13 @@ namespace test {
 		// --------------------- New My Player--------------------------
 		m_Player_01 = std::make_shared<Player>(Vector(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
 
+		// --------------------- first Target with AABBB ---------------
+		m_Target_1 = std::make_shared<Box>(Vector(+6.0f, 0.0f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
+
+		m_Target_1->m_positionT = Point(+6.0f, 0.0f, 4.0f);
+		m_Target_1->m_aabbSize.vecMin = Vector(-1, -1, -1);
+		m_Target_1->m_aabbSize.vecMax = Vector(1, 1, 1);
+		
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
@@ -344,6 +351,10 @@ namespace test {
 		//
 		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
 
+		//
+		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view);
+
+
 		// Disable face culling for bidimensional object
 		GLCall(glDisable(GL_CULL_FACE));
 		{	// Floor
@@ -371,17 +382,32 @@ namespace test {
 		if (m_Shot_active)
 		{
 			Vector p_start = m_Player_01->m_position;
-			Vector p_end = m_Player_01->m_EAngle.ToVector() * 10;
+			Vector p_end = m_Player_01->m_EAngle.ToVector() * 100;
 			
 			Vector vecIntersection;
 			//TraceLine
 			
-			
-			renderShot(p_start, p_start + p_end, proj, view);
+			if (TraceLine(p_start, p_start + p_end, vecIntersection))
+			{
+				//std::cout << "BANG!" << std::endl;
+				renderShot(p_start, vecIntersection, proj, view);
 
-			// Pop at the end if not collision
-			Vector pos_end = p_start + p_end;
-			renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f),  glm::vec3(1.0, 1.0, .0f), proj, view);
+				// Pop at the end if not collision
+				Vector pos_end = vecIntersection;
+				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f), glm::vec3(1.0, 1.0, .0f), proj, view);
+			}
+			else
+			{
+				renderShot(p_start, p_start + p_end, proj, view);
+
+				// Pop at the end if not collision
+				Vector pos_end = p_start + p_end;
+				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.2f), glm::vec3(1.0, 1.0, .0f), proj, view);
+
+			}
+			
+			
+
 
 		}
 
@@ -624,6 +650,27 @@ namespace test {
 		glLineWidth(2.0);
 		GLCall(glDrawArrays(GL_LINE_STRIP, 0, 2));
 
+	}
+
+	bool T01_FirstPrototipe_01::TraceLine(const Vector & v0, const Vector & v1, Vector & vecIntersection)
+	{
+		float flLowestFraction = 1;
+
+		Vector vecTestIntersection;
+		float flTestFraction;
+
+		if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_positionT, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
+
+
+
+		if (flLowestFraction < 1)
+			return true;
+
+		return false;
 	}
 
 }

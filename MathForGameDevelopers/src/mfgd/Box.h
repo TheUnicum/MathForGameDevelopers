@@ -2,6 +2,7 @@
 
 #include "mfgd/mfgd_Classes.h"
 #include "mfgd/mfgd_EulerAngle.h"
+#include "mfgd/AABB.h"
 
 #include "glm/glm.hpp"
 //#include "glm/gtc/matrix_transform.hpp"
@@ -29,6 +30,8 @@ public:
 	Vector m_position;
 
 	Vector m_scale;
+	AABB m_aabbSize;
+	Point m_positionT;
 };
 
 class Player : public Box

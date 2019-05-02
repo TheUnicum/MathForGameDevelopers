@@ -95,6 +95,10 @@ namespace test {
 		void renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view);
 
 		bool m_Shot_active;
+		std::shared_ptr<Box> m_Target_1;
+
+		// Trace a line through the world to simulate a bullet
+		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);
 	};
 
 }

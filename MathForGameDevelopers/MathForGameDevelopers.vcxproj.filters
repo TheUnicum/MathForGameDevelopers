@@ -90,6 +90,9 @@
     <ClCompile Include="src\mfgd\Box.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\mfgd\AABB.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mfgd\mfgd_Classes.h">
