@@ -285,11 +285,11 @@ namespace test {
 		vecRight = vecRight.Normalized();
 		vecFoward = vecFoward.Normalized();
 
-		glm::vec3 Vec3DirRight = glm::vec3(vecRight.x, 0.0f, vecRight.z) * 0.5f;
-		glm::vec3 Vec3DirForward = glm::vec3(vecFoward.x, 0.0f, vecFoward.z) * -.5f;
+		glm::vec3 Vec3DirRight = glm::vec3(vecRight.x, 0.0f, vecRight.z) * .5f;
+		glm::vec3 Vec3DirForward = glm::vec3(vecFoward.x, 0.0f, vecFoward.z) * -1.0f;
 
 		glm::vec3 pos_Vec3 = glm::vec3(m_Player_01->m_position.x, m_Player_01->m_position.y, m_Player_01->m_position.z) 
-				+ glm::vec3(0.0, 0.5f, 0.0) + Vec3DirRight + Vec3DirForward;
+				+ glm::vec3(0.0, .7f, 0.0) + Vec3DirRight + Vec3DirForward;
 		view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
 		proj = glm::perspective(glm::radians(m_f_fov), inv_ratio_aspect, 0.1f, 100.0f);
 
@@ -353,7 +353,7 @@ namespace test {
 
 		// Target Box
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, true);
-		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view, true);
+		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view, false);
 
 		
 		if (m_Shot_active)
@@ -579,7 +579,7 @@ namespace test {
 
 	void T01_FirstPrototipe_01::renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on)
 	{
-		// 
+
 		if (sprite_on)
 		{
 			float flRadius = 1.0f;
@@ -602,8 +602,26 @@ namespace test {
 			model = glm::translate(model, box->GetPosVec3());
 			model = glm::scale(model, box->GetScaleVec3());
 			// MVP
-			// MVP
-			glm::mat4 mvp = proj * view * model;
+
+			glm::mat4 mvp;
+			if (box == m_Player_01)
+			{
+				// 
+				Vector BaseVecF = m_Player_01->m_EAngle.ToVector();
+				BaseVecF.y = 0;
+				BaseVecF.Normalized();
+				Vector BaseVecU(0.0f, 1.0f, 0.0f);
+				Vector BaseVecR = BaseVecF.Cross(BaseVecU);
+				glm::mat4 fru = glm::mat4(1.0f);
+				fru[0] = glm::vec4(BaseVecF.x, BaseVecF.y, BaseVecF.z, 0.0f);
+				fru[1] = glm::vec4(BaseVecU.x, BaseVecU.y, BaseVecU.z, 0.0f);
+				fru[2] = glm::vec4(BaseVecR.x, BaseVecR.y, BaseVecR.z, 0.0f);
+				mvp = proj * view * model * fru;
+			}
+			else
+				mvp = proj * view * model;
+
+
 			m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
 			m_ShaderMesh->SetUniformMat4f("u_model", model);
 			m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
