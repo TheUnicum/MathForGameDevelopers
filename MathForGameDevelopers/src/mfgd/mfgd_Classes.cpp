@@ -62,6 +62,11 @@ Vector Vector::Normalized() const
 	return Normalized;
 }
 
+float Vector::Dot(const Vector & v) const
+{
+	return x * v.x + y * v.y + z * v.z;
+}
+
 Vector Vector::Cross(const Vector & v) const
 {
 	Vector c;
@@ -193,4 +198,29 @@ float Remap(float x, float t1, float t2, float s1, float s2)
 	float yellow = (x - t1) / (t2 - t1);		// Map [t1, t2] -> [ 0,  1]
 	float green = yellow * (s2 - s1) * s1;		// Map [ 0,  1] -> [s1, s2]
 	return green;
+}
+
+// MFGD 18 - Bullet Whizzes (Projections)
+// https://youtu.be/VTV1GTrrtBQ?list=PLW3Zl3wyJwWOpdhYedlD-yCB7WQoHf-My
+// -------------------------------------------------------
+float BulletWhizzes(Point player, Point enemy, Vector direction)
+{
+	/*
+	b : vector from enemy to player
+	a : vector of bullet direction
+	b1: projection of <b> on <a>
+	e : min distance from bullet to player	-> 
+	e = b - b1
+	a dot e = 0 : perpendicular vectors
+	b1 = (float)x * a
+	*/
+
+	Vector b = player - enemy;
+	Vector a = direction;
+
+	float x = a.Dot(b) / a.Dot(a);
+
+	// Vector to enemy to min distance:
+	// b1 = x * a
+
 }
