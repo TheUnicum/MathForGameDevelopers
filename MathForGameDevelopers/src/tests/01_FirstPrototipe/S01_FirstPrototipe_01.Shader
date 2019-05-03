@@ -44,6 +44,9 @@ uniform vec3 u_lightColor;
 uniform vec3 u_lightPos;
 uniform vec3 u_viewPos;
 
+uniform sampler2D u_TexMap;
+uniform bool u_Image;
+
 void main()
 {
 	//FragColor = vec4(texture(material.diffuse1, TexCoords));
@@ -66,7 +69,11 @@ void main()
 	vec3 specular = specularStrength * spec * u_lightColor;
 
 	vec3 result = (ambient + diffuse + specular) * u_Box_color;
-	FragColor = vec4(result, 1.0f);
+
+	if (u_Image)
+		FragColor = texture(u_TexMap, TexCoords);
+	else
+		FragColor = vec4(result, 1.0f);
 
 
 

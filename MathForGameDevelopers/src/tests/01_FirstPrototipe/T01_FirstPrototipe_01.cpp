@@ -68,7 +68,7 @@ namespace test {
 		//	std::cout << ele << std::endl;
 
 		// Textures - Shared pointer
-		msp_mTexture0 = std::make_shared<Texture>("res/textures/marble.jpg", TextureType::DIFFUSE); // ontainer2.png
+		msp_mTexture0 = std::make_shared<Texture>("res/textures/monster.png", TextureType::DIFFUSE); // ontainer2.png
 		msp_Textures.push_back(msp_mTexture0);
 
 		std::vector<unsigned int> indices0;
@@ -161,6 +161,8 @@ namespace test {
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	}
 
 	T01_FirstPrototipe_01::~T01_FirstPrototipe_01()
@@ -253,7 +255,7 @@ namespace test {
 		}
 
 		// Disable blending for manual discard-----------------------------
-		GLCall(glDisable(GL_BLEND));
+		//GLCall(glDisable(GL_BLEND));
 
 		glClearColor(0.73f, 0.845f, 0.918f, 1.0f);
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -313,16 +315,7 @@ namespace test {
 			GLCall(glFrontFace(GL_CCW));
 		}
 
-		// 
-		renderCube(m_Box_01, m_color_box, proj, view);
-		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view);
 
-		//
-		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
-
-		// Target Box
-		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view);
-		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view);
 
 
 		// Disable face culling for bidimensional object
@@ -342,12 +335,25 @@ namespace test {
 			m_ShaderMesh->SetUniformMat4f("u_model", model);
 			m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
 
+
 			m_ShaderMesh->SetUniform3fv("u_Box_color", m_color_floor);
-			
+
 
 			m_mesh_quad->Draw(m_ShaderMesh);
 		}
 
+
+
+		// 
+		renderCube(m_Box_01, m_color_box, proj, view, true);
+		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view, true);
+
+		//
+		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
+
+		// Target Box
+		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, true);
+		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view, true);
 
 		
 		if (m_Shot_active)
@@ -564,33 +570,54 @@ namespace test {
 		m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
 		m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
 
+		m_ShaderMesh->SetUniform1i("u_Image", 0);
+
 
 		// Draw MESH
 		m_mesh->Draw(m_ShaderMesh);
 	}
 
-	void T01_FirstPrototipe_01::renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view)
+	void T01_FirstPrototipe_01::renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on)
 	{
-		m_ShaderMesh->Bind();
-		// Model Matrix
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, box->GetPosVec3());
-		model = glm::scale(model, box->GetScaleVec3());
-		// MVP
-		// MVP
-		glm::mat4 mvp = proj * view * model;
-		m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
-		m_ShaderMesh->SetUniformMat4f("u_model", model);
-		m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
+		// 
+		if (sprite_on)
+		{
+			float flRadius = 1.0f;
+			Vector vp = m_Player_01->m_position - box->m_position;// -
+			vp = vp.Normalized();
+			Vector vecUp = Vector(0.0f, 1.0f, 0.0f);
+			Vector vecRight = vecUp.Cross(vp);
+			vecUp = vp.Cross(vecRight);
 
-		m_ShaderMesh->SetUniform3fv("u_Box_color", color);
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, box->GetPosVec3());
+			model = glm::scale(model, box->GetScaleVec3());
+			renderBillboard(flRadius, vecUp, vecRight, proj, view, model);
+		}
+		else
+		{
+			m_ShaderMesh->Bind();
+			// Model Matrix
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, box->GetPosVec3());
+			model = glm::scale(model, box->GetScaleVec3());
+			// MVP
+			// MVP
+			glm::mat4 mvp = proj * view * model;
+			m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
+			m_ShaderMesh->SetUniformMat4f("u_model", model);
+			m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
 
-		m_ShaderMesh->SetUniform3fv("u_lightColor", m_lightColor);
-		m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
-		m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
+			m_ShaderMesh->SetUniform3fv("u_Box_color", color);
 
-		// Draw MESH
-		m_mesh->Draw(m_ShaderMesh);
+			m_ShaderMesh->SetUniform3fv("u_lightColor", m_lightColor);
+			m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
+			m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
+
+			// Draw MESH
+			m_mesh->Draw(m_ShaderMesh);
+		}
+
 	}
 
 	void T01_FirstPrototipe_01::renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view)
@@ -623,6 +650,65 @@ namespace test {
 		glLineWidth(2.0);
 		GLCall(glDrawArrays(GL_LINE_STRIP, 0, 2));
 
+	}
+
+	void T01_FirstPrototipe_01::renderBillboard(float flRadius, Vector vecUp, Vector vecRight, glm::mat4 proj, glm::mat4 view, glm::mat4 model)
+	{
+
+		vecUp = vecUp * flRadius;
+		vecRight = vecRight * flRadius;
+
+		Vector dl = - vecUp - vecRight;
+		Vector dr = - vecUp + vecRight;
+		Vector ur =  vecUp + vecRight;
+		Vector ul =  vecUp - vecRight;
+
+		float positions[] = {
+			dl.x, dl.y, dl.z, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			dr.x, dr.y, dr.z, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			ur.x, ur.y, ur.z, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+			ul.x, ul.y, ul.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+		};
+
+		unsigned int uint_quad_indices[] = {
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		VertexBuffer VertexBuffer(positions, 4 * (3 + 3 + 2) * sizeof(float));
+
+		VertexBufferLayout layout;
+		layout.Push<float>(3);
+		layout.Push<float>(3);
+		layout.Push<float>(2);
+		VertexArray VAO;
+		VAO.AddBuffer(VertexBuffer, layout);
+		IndexBuffer IndexBuffer(uint_quad_indices, 6);
+
+
+		// Molde
+		//glm::mat4 model = glm::mat4(1.0f);
+
+		m_ShaderMesh->Bind();
+		//MVP
+		glm::mat4 mvp = proj * view * model;
+		m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
+
+		//m_Shader = std::make_unique<Shader>("src/tests/01_Getting_started/05_Shader/S05_Shader_01.Shader");
+		glm::vec3 color_shot = glm::vec3(1.0f, 0.f, 0.0f);
+		m_ShaderMesh->SetUniform3fv("u_Box_color", color_shot);
+
+
+		msp_mTexture0->Bind(0);
+		m_ShaderMesh->SetUniform1i("u_TexMap", 0);
+		m_ShaderMesh->SetUniform1i("u_Image", 1);
+
+		VAO.Bind();
+		IndexBuffer.Bind();
+		GLCall(glDrawElements(GL_TRIANGLES, IndexBuffer.GetCount(), GL_UNSIGNED_INT, nullptr));
+
+
+		m_ShaderMesh->SetUniform1i("u_Image", 0);
 	}
 
 	// Trace a line through the world to simulate, eg, a bullet

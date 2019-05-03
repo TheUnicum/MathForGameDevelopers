@@ -80,11 +80,12 @@ namespace test {
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);
 
 		std::shared_ptr<Box> m_Box_01, m_Box_02;
-		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
+		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on = false);
 
 		std::shared_ptr<Player> m_Player_01;
 
 		void renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view);
+		void renderBillboard(float flRadius, Vector vecUp, Vector vecRight, glm::mat4 proj, glm::mat4 view, glm::mat4 model);
 
 		bool m_Shot_active;
 		std::shared_ptr<Box> m_Target_1, m_Target_2;
