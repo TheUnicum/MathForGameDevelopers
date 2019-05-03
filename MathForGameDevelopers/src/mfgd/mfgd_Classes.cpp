@@ -185,3 +185,12 @@ float Approch(float flGoal, float flCurrent, float dVelocity)
 	else return flGoal;
 
 }
+
+// MFGD 17 - Explosions! (The Remap Function)
+// ------------------------------------------------------
+float Remap(float x, float t1, float t2, float s1, float s2)
+{
+	float yellow = (x - t1) / (t2 - t1);		// Map [t1, t2] -> [ 0,  1]
+	float green = yellow * (s2 - s1) * s1;		// Map [ 0,  1] -> [s1, s2]
+	return green;
+}

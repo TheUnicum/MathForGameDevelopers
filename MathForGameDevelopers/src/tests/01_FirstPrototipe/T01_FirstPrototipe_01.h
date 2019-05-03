@@ -91,6 +91,8 @@ namespace test {
 
 		// Trace a line through the world to simulate a bullet
 		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);
+
+		float m_flTimeCreated = 0.0f;
 	};
 
 }

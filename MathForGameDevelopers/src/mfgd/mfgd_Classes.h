@@ -59,3 +59,5 @@ void Test_MFGD();
 // MFGD 12 - Smooth Move(ment) (Linear Interpolation)
 float Approch(float flGoal, float flCurrent, float dVelocity);
 
+// MFGD 17 - Explosions! (The Remap Function)
+float Remap(float x, float t1, float t2, float s1, float s2);

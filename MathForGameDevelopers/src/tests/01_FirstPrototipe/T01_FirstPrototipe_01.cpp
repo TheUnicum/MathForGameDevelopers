@@ -349,6 +349,7 @@ namespace test {
 		}
 
 
+		
 		if (m_Shot_active)
 		{
 			Vector p_start = m_Player_01->m_position;
@@ -356,15 +357,26 @@ namespace test {
 			
 			Vector vecIntersection;
 			//TraceLine
-			
+		
 			if (TraceLine(p_start, p_start + p_end, vecIntersection))
 			{
+				float flPuffTime = 0.05f;
+				float flTimeOver = m_flTimeCreated + flPuffTime;
+				
+				float flStartSize = 0.2f;
+				float flEndSize = 0.5f;
+				float time_actual = (float)glfwGetTime();
+				float flSize = Remap(time_actual, m_flTimeCreated, flTimeOver, flStartSize, flEndSize);
+				float iOrange = Remap(time_actual, m_flTimeCreated, flTimeOver, 0.2f, 1.0f);
+
+
 				//std::cout << "BANG!" << std::endl;
 				renderShot(p_start, vecIntersection, proj, view);
 
 				// Pop at the end if not collision
 				Vector pos_end = vecIntersection;
-				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.05f), glm::vec3(1.0, 1.0, .0f), proj, view);
+				//renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.05f), glm::vec3(1.0, 1.0, .0f), proj, view);
+				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(flSize), glm::vec3(1.0, iOrange, 0.0f), proj, view);
 			}
 			else
 			{
@@ -372,9 +384,12 @@ namespace test {
 
 				// Pop at the end if not collision
 				Vector pos_end = p_start + p_end;
+				m_flTimeCreated = (float)glfwGetTime();
 			}
-
 		}
+		else
+			m_flTimeCreated = (float)glfwGetTime();
+
 	}
 
 	void T01_FirstPrototipe_01::OnImGuiRender()
