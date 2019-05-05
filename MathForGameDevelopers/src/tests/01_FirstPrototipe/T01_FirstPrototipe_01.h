@@ -21,6 +21,7 @@
 
 #include "mfgd/mfgd_EulerAngle.h"
 #include "mfgd/Box.h"
+#include "mfgd/matrix.h"
 
 namespace test {
 

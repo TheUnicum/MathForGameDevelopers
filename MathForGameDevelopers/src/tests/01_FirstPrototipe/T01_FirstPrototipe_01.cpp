@@ -163,6 +163,17 @@ namespace test {
 		glfwSwapInterval(1);
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+
+
+		// Check matrix <Class>
+		Vector v0(1, 2, 3);
+		Vector v1(5, 6, 7);
+		Vector v2(9, 10, 11);
+		Vector v3(13, 14, 15);
+		Matrix4x4 M4_fru(v0, v1, v2, v3);
+		std::cout << M4_fru << std::endl;
+
 	}
 
 	T01_FirstPrototipe_01::~T01_FirstPrototipe_01()
