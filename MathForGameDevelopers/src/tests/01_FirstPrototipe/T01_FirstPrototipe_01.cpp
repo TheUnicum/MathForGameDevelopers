@@ -171,8 +171,18 @@ namespace test {
 		Vector v1(5, 6, 7);
 		Vector v2(9, 10, 11);
 		Vector v3(13, 14, 15);
-		Matrix4x4 M4_fru(v0, v1, v2, v3);
-		std::cout << M4_fru << std::endl;
+		Matrix4x4 M4_fru1(v0, v1, v2, v3);
+
+		v0 = Vector(11, 12, 13);
+		v1 = Vector(15, 16, 17);
+		v2 = Vector(19, 20, 21);
+		v3 = Vector(23, 24, 25);
+		Matrix4x4 M4_fru2(v0, v1, v2, v3);
+		std::cout << M4_fru2 << std::endl;
+
+		Matrix4x4 prodotto = Matrix4x4();
+		prodotto = M4_fru1 * M4_fru2;
+		std::cout << prodotto << std::endl;
 
 	}
 

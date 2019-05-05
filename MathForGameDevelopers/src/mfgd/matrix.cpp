@@ -18,6 +18,19 @@ void Matrix4x4::Identity()
 	m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
 }
 
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & t) const
+{
+	Matrix4x4 r;
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			r.m[i][j] = m[i][0] * t.m[0][j] + m[i][1] * t.m[1][j] + m[i][2] * t.m[2][j] + m[i][3] * t.m[3][j];
+	}
+
+	return r;
+}
+
 
 // utility overload for iostream Vertex Data
 std::ostream & operator<<(std::ostream & stream, const Matrix4x4 & matrix)

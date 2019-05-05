@@ -12,7 +12,7 @@ public:
 public:
 	void Identity();
 
-
+	Matrix4x4 operator*(const Matrix4x4& t) const;
 
 	struct MVector4D
 	{
