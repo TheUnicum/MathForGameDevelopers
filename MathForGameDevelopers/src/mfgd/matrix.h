@@ -38,5 +38,8 @@ public:
 
 };
 
+// Static funcitons
+Matrix4x4 GetView(Point& position, Vector& target, Vector& worldUp);
+
 // utility overload std::cout
 std::ostream& operator<<(std::ostream& stream, const Matrix4x4& matrix);

@@ -333,6 +333,12 @@ namespace test {
 		view = glm::lookAt(pos_Vec3, pos_Vec3 + target_Vec3_, glm::vec3(0.0f, 1.0f, 0.0f));
 		proj = glm::perspective(glm::radians(m_f_fov), inv_ratio_aspect, 0.1f, 100.0f);
 
+		// my_View matrix----------------------------------------------------------------------
+		Point temp_pos = Point(pos_Vec3.x, pos_Vec3.y, pos_Vec3.z);
+		Vector pos_plus_target = temp_pos + vec_target;
+		vecUp = Vector(0.0f, 1.0f, 0.0f);
+		Matrix4x4 myView = GetView(temp_pos, pos_plus_target, vecUp);
+
 
 		if (m_b_face_culling_enabled)
 		{
@@ -389,7 +395,8 @@ namespace test {
 		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view, true);
 
 		//
-		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
+		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
+		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, glm::transpose(myView.ToGlm()));
 
 		// Target Box
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, true);
@@ -655,6 +662,7 @@ namespace test {
 
 				// ---- My Matrix 4d operations
 				Matrix4x4 myFur(BaseVecF, BaseVecU, BaseVecR);
+
 				mvp = proj * view * model * myFur.ToGlm();
 			}
 			else

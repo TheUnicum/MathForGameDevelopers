@@ -39,6 +39,7 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & t) const
 	return r;
 }
 
+
 glm::mat4 Matrix4x4::ToGlm() const
 {
 	// FRU
@@ -49,14 +50,8 @@ glm::mat4 Matrix4x4::ToGlm() const
 			 | Fx Uy Rz 0 |
 			 | 0  0  0  1 |
 			 +-          -+
-
-			 +-          -+  +-           -+
-			 | Rx Ry Rz 0 |  | 1  0  0 -Px |
-	LookAt = | Ux Uy Uz 0 |  | 0  1  0 -Py |
-			 | Dx Dy Dz 0 |  | 0  0  1 -Pz |
-			 | 0  0  0  1 |  | 0  0  0  1  |
-			 +-          -+  +-           -+
 	*/
+
 	// In glm we access elements as mat[col][row] due to clumn-major layout
 	glm::mat4 r(1.0f);
 	// Vector 0
@@ -75,6 +70,45 @@ glm::mat4 Matrix4x4::ToGlm() const
 }
 
 
+// Static funcitons
+Matrix4x4 GetView(Point & position, Vector & target, Vector & worldUp)
+{
+	/*
+			 +-          -+  +-           -+
+			 | Rx Ry Rz 0 |  | 1  0  0 -Px |
+	LookAt = | Ux Uy Uz 0 |  | 0  1  0 -Py |
+			 | Dx Dy Dz 0 |  | 0  0  1 -Pz |
+			 | 0  0  0  1 |  | 0  0  0  1  |
+			 +-          -+  +-           -+
+	*/
+	Vector zaxis_D = position - target;
+	zaxis_D = zaxis_D.Normalized();
+
+	Vector xaxis_R = worldUp.Cross(zaxis_D);
+	xaxis_R = xaxis_R.Normalized();
+
+	Vector yaxis_U = zaxis_D.Cross(xaxis_R);
+	yaxis_U.Normalized();
+
+	Matrix4x4 r(xaxis_R, yaxis_U, zaxis_D);
+	r.v[3] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	std::cout << r << std::endl;
+
+	Matrix4x4 t;
+	t.m[0][3] = -position.x;
+	t.m[1][3] = -position.y;
+	t.m[2][3] = -position.z;
+
+
+	Matrix4x4 ret;
+	ret = r * t;
+	return ret;
+
+}
+
+
+
 // utility overload for iostream Vertex Data
 std::ostream & operator<<(std::ostream & stream, const Matrix4x4 & matrix)
 {
@@ -91,3 +125,4 @@ std::ostream & operator<<(std::ostream & stream, const Matrix4x4 & matrix)
 	stream << "M4d4 v0: (" << matrix.v[3].x << ", " << matrix.v[3].y << ", " << matrix.v[3].z << ", " << matrix.v[3].w << ")";
 	return stream;
 }
+
