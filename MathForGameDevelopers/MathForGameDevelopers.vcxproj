@@ -156,6 +156,7 @@
     <ClCompile Include="src\mfgd\matrix.cpp" />
     <ClCompile Include="src\mfgd\mfgd_Classes.cpp" />
     <ClCompile Include="src\mfgd\mfgd_EulerAngle.cpp" />
+    <ClCompile Include="src\mfgd\Vector4d.cpp" />
     <ClCompile Include="src\opengl\Camera.cpp" />
     <ClCompile Include="src\opengl\FrameBuffer.cpp" />
     <ClCompile Include="src\opengl\IndexBuffer.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\mfgd\matrix.h" />
     <ClInclude Include="src\mfgd\mfgd_Classes.h" />
     <ClInclude Include="src\mfgd\mfgd_EulerAngle.h" />
+    <ClInclude Include="src\mfgd\Vector4d.h" />
     <ClInclude Include="src\opengl\Camera.h" />
     <ClInclude Include="src\opengl\FrameBuffer.h" />
     <ClInclude Include="src\opengl\IndexBuffer.h" />

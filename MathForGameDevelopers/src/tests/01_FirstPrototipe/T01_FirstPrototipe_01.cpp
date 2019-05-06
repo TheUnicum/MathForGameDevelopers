@@ -3,6 +3,7 @@
 
 #include "mfgd/mfgd_Classes.h"
 #include "mfgd/AABB.h"
+#include "mfgd/Vector4d.h"
 
 namespace test {
 
@@ -183,6 +184,24 @@ namespace test {
 		Matrix4x4 prodotto = Matrix4x4();
 		prodotto = M4_fru1 * M4_fru2;
 		std::cout << prodotto << std::endl;
+
+		// Check Vector 4d
+		std::cout << "----Vector 4d-----" << std::endl;
+		Vector4d v4_1(1, 2, 3, 4);
+		Vector4d v4_2(5, 6, 7, 8);
+		Vector4d v4_3(9, 10, 11, 12);
+		Vector4d v4_4(13, 14, 15, 16);
+		M4_fru1 = Matrix4x4(v4_1, v4_2, v4_3, v4_4);
+
+		v4_1 = Vector4d(11, 12, 13, 14);
+		v4_2 = Vector4d(15, 16, 17, 18);
+		v4_3 = Vector4d(19, 20, 21, 22);
+		v4_4 = Vector4d(23, 24, 25, 26);
+		M4_fru2 = Matrix4x4(v4_1, v4_2, v4_3, v4_4);
+		std::cout << M4_fru2 << std::endl;
+		prodotto = M4_fru1 * M4_fru2;
+		std::cout << prodotto << std::endl;
+
 
 	}
 
@@ -633,11 +652,10 @@ namespace test {
 				BaseVecF.Normalized();
 				Vector BaseVecU(0.0f, 1.0f, 0.0f);
 				Vector BaseVecR = BaseVecF.Cross(BaseVecU);
-				glm::mat4 fru = glm::mat4(1.0f);
-				fru[0] = glm::vec4(BaseVecF.x, BaseVecF.y, BaseVecF.z, 0.0f);
-				fru[1] = glm::vec4(BaseVecU.x, BaseVecU.y, BaseVecU.z, 0.0f);
-				fru[2] = glm::vec4(BaseVecR.x, BaseVecR.y, BaseVecR.z, 0.0f);
-				mvp = proj * view * model * fru;
+
+				// ---- My Matrix 4d operations
+				Matrix4x4 myFur(BaseVecF, BaseVecU, BaseVecR);
+				mvp = proj * view * model * myFur.ToGlm();
 			}
 			else
 				mvp = proj * view * model;
