@@ -16,7 +16,14 @@ public:
 public:
 	void Identity();
 
+	Matrix4x4 Transposed() const;
+
 	Matrix4x4 operator*(const Matrix4x4& t) const;
+
+
+	// Set a transformation
+	void SetTranslation(const Vector& vecPos);
+	void SetScale(const Vector& vecScale);
 
 	glm::mat4 ToGlm() const;
 

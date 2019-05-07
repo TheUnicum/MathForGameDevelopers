@@ -395,12 +395,14 @@ namespace test {
 		renderCube(m_Box_02, glm::vec3(0.0f, 1.0f, 0.0f), proj, view, true);
 
 		//
-		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
-		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, glm::transpose(myView.ToGlm()));
+		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
+		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, glm::transpose(myView.ToGlm()));
+		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, myView.ToGlm());
 
 		// Target Box
-		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, true);
+		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		renderCube(m_Target_2, glm::vec3(0.7, 0.7, 0.4f), proj, view, false);
+
 
 		
 		if (m_Shot_active)
@@ -648,22 +650,29 @@ namespace test {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, box->GetPosVec3());
 			model = glm::scale(model, box->GetScaleVec3());
-			// MVP
+
+
+			Matrix4x4 myTranslate, myScale;
+			myTranslate.SetTranslation(box->GetPosition());
+			myScale.SetScale(box->m_scale);
+			model = (myTranslate * myScale).ToGlm();
+
 
 			glm::mat4 mvp;
 			if (box == m_Player_01)
 			{
 				// 
-				Vector BaseVecF = m_Player_01->m_EAngle.ToVector();
+				Vector BaseVecF = -m_Player_01->m_EAngle.ToVector();
 				BaseVecF.y = 0;
 				BaseVecF.Normalized();
 				Vector BaseVecU(0.0f, 1.0f, 0.0f);
 				Vector BaseVecR = BaseVecF.Cross(BaseVecU);
 
 				// ---- My Matrix 4d operations
-				Matrix4x4 myFur(BaseVecF, BaseVecU, BaseVecR);
+				Matrix4x4 myRUF(BaseVecR, BaseVecU, BaseVecF);
+				myRUF = myRUF.Transposed();
 
-				mvp = proj * view * model * myFur.ToGlm();
+				mvp = proj * view * model * myRUF.ToGlm();
 			}
 			else
 				mvp = proj * view * model;

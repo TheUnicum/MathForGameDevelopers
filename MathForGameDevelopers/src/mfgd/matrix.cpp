@@ -26,6 +26,16 @@ void Matrix4x4::Identity()
 	m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
 }
 
+Matrix4x4 Matrix4x4::Transposed() const
+{
+	Matrix4x4 r;
+	r.m[0][0] = m[0][0]; r.m[1][0] = m[0][1]; r.m[2][0] = m[0][2]; r.m[3][0] = m[0][3];
+	r.m[0][1] = m[1][0]; r.m[1][1] = m[1][1]; r.m[2][1] = m[1][2]; r.m[3][1] = m[1][3];
+	r.m[0][2] = m[2][0]; r.m[1][2] = m[2][1]; r.m[2][2] = m[2][2]; r.m[3][2] = m[2][3];
+	r.m[0][3] = m[3][0]; r.m[1][3] = m[3][1]; r.m[2][3] = m[3][2]; r.m[3][3] = m[3][3];
+	return r;
+}
+
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & t) const
 {
 	Matrix4x4 r;
@@ -40,32 +50,50 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4 & t) const
 }
 
 
+void Matrix4x4::SetTranslation(const Vector & vecPos)
+{
+	// Non mi torna
+	m[3][0] = vecPos.x;
+	m[3][1] = vecPos.y;
+	m[3][2] = vecPos.z;
+
+}
+
+void Matrix4x4::SetScale(const Vector & vecScale)
+{
+	m[0][0] = vecScale.x;
+	m[1][1] = vecScale.y;
+	m[2][2] = vecScale.z;
+}
+
 glm::mat4 Matrix4x4::ToGlm() const
 {
+	// Change of basis
+
 	// FRU
-	/*		   F  U  R
+	/*		   R  U  F
 			 +-          -+
-			 | Fx Uy Rz 0 |
-	LookAt = | Fx Uy Rz 0 |
-			 | Fx Uy Rz 0 |
+			 | Rx Uy Fz 0 |
+	R U F  = | Rx Uy Fz 0 |
+			 | Rx Uy Fz 0 |
 			 | 0  0  0  1 |
 			 +-          -+
 	*/
 
-	// In glm we access elements as mat[col][row] due to clumn-major layout
 	glm::mat4 r(1.0f);
 	// Vector 0
-	r[0] = glm::vec4(v[0].x, v[0].y, v[0].z, v[0].w );
-	r[1] = glm::vec4(v[1].x, v[1].y, v[1].z, v[1].w );
-	r[2] = glm::vec4(v[2].x, v[2].y, v[2].z, v[2].w );
-	r[3] = glm::vec4(v[3].x, v[3].y, v[3].z, v[3].w );
+	//r[0] = glm::vec4(v[0].x, v[0].y, v[0].z, v[0].w );
+	//r[1] = glm::vec4(v[1].x, v[1].y, v[1].z, v[1].w );
+	//r[2] = glm::vec4(v[2].x, v[2].y, v[2].z, v[2].w );
+	//r[3] = glm::vec4(v[3].x, v[3].y, v[3].z, v[3].w );
 
-	// if is not correc is possible to transpose the Matrix
-	//r = glm::transpose(r);
 
-	// for more info check camera.cpp
-	//	<OpenGL-Beginner-to-Advance.sln>
+	r[0] = glm::vec4(v[0].x, v[1].x, v[2].x, v[3].x);
+	r[1] = glm::vec4(v[0].y, v[1].y, v[2].y, v[3].y);
+	r[2] = glm::vec4(v[0].z, v[1].z, v[2].z, v[3].z);
+	r[3] = glm::vec4(v[0].w, v[1].w, v[2].w, v[3].w);
 
+	r = glm::transpose(r);
 	return r;
 }
 
@@ -90,19 +118,32 @@ Matrix4x4 GetView(Point & position, Vector & target, Vector & worldUp)
 	Vector yaxis_U = zaxis_D.Cross(xaxis_R);
 	yaxis_U.Normalized();
 
-	Matrix4x4 r(xaxis_R, yaxis_U, zaxis_D);
+	//Matrix4x4 r(xaxis_R, yaxis_U, zaxis_D);
+	
+	Vector v1 = Vector(xaxis_R.x, yaxis_U.x, zaxis_D.x);
+	Vector v2 = Vector(xaxis_R.y, yaxis_U.y, zaxis_D.y);
+	Vector v3 = Vector(xaxis_R.z, yaxis_U.z, zaxis_D.z);
+
+	Matrix4x4 r(v1, v2, v3);
+
+	
 	r.v[3] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	std::cout << r << std::endl;
+	//std::cout << r << std::endl;
 
 	Matrix4x4 t;
-	t.m[0][3] = -position.x;
-	t.m[1][3] = -position.y;
-	t.m[2][3] = -position.z;
+	//t.m[0][3] = -position.x;
+	//t.m[1][3] = -position.y;
+	//t.m[2][3] = -position.z;
+
+	t.m[3][0] = -position.x;
+	t.m[3][1] = -position.y;
+	t.m[3][2] = -position.z;
 
 
 	Matrix4x4 ret;
 	ret = r * t;
+	ret = t * r;
 	return ret;
 
 }
