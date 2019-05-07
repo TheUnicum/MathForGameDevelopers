@@ -20,6 +20,8 @@ public:
 
 	Matrix4x4 operator*(const Matrix4x4& t) const;
 
+	bool operator==(const glm::mat4& t) const;
+
 
 	// Set a transformation
 	void SetTranslation(const Vector& vecPos);
@@ -50,3 +52,4 @@ Matrix4x4 GetView(Point& position, Vector& target, Vector& worldUp);
 
 // utility overload std::cout
 std::ostream& operator<<(std::ostream& stream, const Matrix4x4& matrix);
+std::ostream& operator<<(std::ostream& stream, const glm::mat4& matrix);

@@ -232,5 +232,5 @@ float BulletWhizzes(Point player, Point enemy, Vector direction)
 
 	// Vector to enemy to min distance:
 	// b1 = x * a
-
+	return 0;
 }

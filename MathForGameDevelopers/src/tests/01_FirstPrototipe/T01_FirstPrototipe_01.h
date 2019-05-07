@@ -14,7 +14,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "opengl/Camera.h"	
+//#include "opengl/Camera.h"	
 
 #include "opengl/Mesh.h"
 #include "opengl/Model.h"
@@ -44,7 +44,7 @@ namespace test {
 
 		bool m_b_firstMouse;
 		float m_lastX, m_lastY;
-		std::unique_ptr<Camera> m_camera;
+		//std::unique_ptr<Camera> m_camera;
 		// keys pressed options
 		bool m_mouse_disable, m_mouse_disable_i_1;
 		bool m_mouse_lock;
@@ -74,13 +74,12 @@ namespace test {
 		bool m_enable_LERP;
 		float m_velocity = 5;
 
-		void renderCube(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 		void renderPop(glm::vec3 position, glm::vec3 scale, glm::vec3 color, glm::mat4 proj, glm::mat4 view);
 
 		glm::vec3 m_lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_lightPos = glm::vec3(-4.0f, 4.0f, 2.0f);
 
-		std::shared_ptr<Box> m_Box_01, m_Box_02;
+		//std::shared_ptr<Box> m_Box_01, m_Box_02;
 		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on = false);
 
 		std::shared_ptr<Player> m_Player_01;
