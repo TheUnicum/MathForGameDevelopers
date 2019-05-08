@@ -6,3 +6,6 @@ Implemented little prototype Game for future tests.
 
 Bullet Collision (Vector/AABB Intersection).
 ![](/MathForGameDevelopers/res/previews/preview_v02.png)
+
+Updated Bullet Collisions (Coordinate Systems) (Matrix Inversions)
+![](/MathForGameDevelopers/res/previews/preview_v03.png)

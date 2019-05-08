@@ -35,6 +35,7 @@ public:
 
 
 	// Trasform a position vector
+	Vector operator*(const Vector& v) const;
 	Vector4d operator*(const Vector4d& v) const;
 
 	glm::mat4 ToGlm() const;

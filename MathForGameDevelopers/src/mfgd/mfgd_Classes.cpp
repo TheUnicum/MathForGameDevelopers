@@ -112,6 +112,11 @@ Point Point::AddVector(Vector v)
 	return p2;
 }
 
+Point Point::operator-() const
+{
+	return Point(-x, -y, -z);
+}
+
 Point Point::operator+(const Vector & v) const
 {
 	return Point(x + v.x, y + v.y, z + v.z);

@@ -548,13 +548,21 @@ namespace test {
 			model = glm::translate(model, box->GetPosVec3());
 			model = glm::scale(model, box->GetScaleVec3());
 
-			Matrix4x4 myTranslate;
-			Matrix4x4 myRotation;
-			Matrix4x4 myScale;
-			myTranslate.SetTranslation(box->m_position);
-			myRotation.SetRotation(box->m_f_angle, box->m_v3_rotation);
+			Matrix4x4 myScale, myRotation, myTranslate;
 			myScale.SetScale(box->m_scale);
-			model = (myTranslate * myRotation * myScale).ToGlm();
+			myRotation.SetRotation(box->m_f_angle, box->m_v3_rotation);
+			myTranslate.SetTranslation(box->m_position);
+			box->m_Transform = myTranslate * myRotation * myScale;
+			model = (box->m_Transform).ToGlm();
+
+			// calculate TransformInverse for AABB line interception in Local-Space
+			// T^-1 = (TRS)^-1 = (S^-1) * (R^-1) * (T^-1) = (
+			Matrix4x4 myScaleInverse, myRotationInverse, myTranslateInverse;
+			myScaleInverse.SetScale(1 / box->m_scale);
+			myRotationInverse = myRotation.Transposed();
+			myTranslateInverse.SetTranslation(-box->m_position);	//Point operator-() const;
+			box->m_TransformInverse = myScaleInverse * myRotationInverse * myTranslateInverse;
+
 
 			glm::mat4 mvp;
 			if (box == m_Player_01)
@@ -691,21 +699,22 @@ namespace test {
 		Vector vecTestIntersection;
 		float flTestFraction;
 
-		if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		//if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		if (LineAABBIntersection(m_Target_1->m_aabbSize, m_Target_1->m_TransformInverse*v0, m_Target_1->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
-			vecIntersection = vecTestIntersection;
+			vecIntersection = m_Target_1->m_Transform * vecTestIntersection;
 			flLowestFraction = flTestFraction;
 		}
 
-		if (LineAABBIntersection(m_Target_2->m_aabbSize + m_Target_2->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		if (LineAABBIntersection(m_Target_2->m_aabbSize, m_Target_2->m_TransformInverse*v0, m_Target_2->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
-			vecIntersection = vecTestIntersection;
+			vecIntersection = m_Target_2->m_Transform * vecTestIntersection;
 			flLowestFraction = flTestFraction;
 		}
 
-		if (LineAABBIntersection(m_Target_3->m_aabbSize + m_Target_3->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		if (LineAABBIntersection(m_Target_3->m_aabbSize, m_Target_3->m_TransformInverse*v0, m_Target_3->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
-			vecIntersection = vecTestIntersection;
+			vecIntersection = m_Target_3->m_Transform * vecTestIntersection;
 			flLowestFraction = flTestFraction;
 		}
 

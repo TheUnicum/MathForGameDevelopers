@@ -38,6 +38,12 @@ public:
 };
 
 
+inline const Vector operator/(float s, const Vector& v) 
+{ 
+	return Vector(s / v.x, s / v.y, s / v.z); 
+}
+
+
 class Point
 {
 public:
@@ -45,6 +51,8 @@ public:
 	Point(float x, float y, float z);
 
 	Point AddVector(Vector v);
+
+	Point operator-() const;
 
 	Point operator+(const Vector& v) const;
 	Point operator-(const Vector& v) const;

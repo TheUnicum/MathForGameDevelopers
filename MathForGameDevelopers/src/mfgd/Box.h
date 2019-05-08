@@ -3,6 +3,7 @@
 #include "mfgd/mfgd_Classes.h"
 #include "mfgd/mfgd_EulerAngle.h"
 #include "mfgd/AABB.h"
+#include "mfgd/matrix.h"
 
 #include "glm/glm.hpp"
 //#include "glm/gtc/matrix_transform.hpp"
@@ -35,6 +36,10 @@ public:
 	AABB m_aabbSize;
 
 	Vector m_velocity;
+
+	//utility
+	Matrix4x4 m_Transform;
+	Matrix4x4 m_TransformInverse;
 };
 
 class Player : public Box
