@@ -130,83 +130,17 @@ namespace test {
 		msp_mTextures2.push_back(msp_mTextureFloor);
 		m_mesh_quad = std::make_unique<Mesh>(vertices_quad_3v_3n_2t, vec_quad_indices, msp_mTextures2);
 
-
 		// --------------------- New My Player--------------------------
 		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
 
 		// --------------------- first Target with AABBB ---------------
-		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 0.0f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
-		m_Target_1->m_aabbSize.vecMin = Vector(-1, -1, -1);
-		m_Target_1->m_aabbSize.vecMax = Vector(1, 1, 1);
-	
-		// study glm::mat4
-		glm::mat4 gIdentity(1.0f);
-		std::cout << gIdentity << std::endl;
-
-		// study glm::mat4
-		Matrix4x4 mIdentity;
-		std::cout << mIdentity << std::endl;
-
-
-		// translate compare
-		// ---------------------------------------
-		glm::mat4 gScale(1.0f);
-		gScale = glm::scale(gScale, glm::vec3(2.2f, 3.3f, 4.4f));
-		std::cout << gScale << std::endl;
-
-		Matrix4x4 mScale;
-		mScale.SetScale(Vector(2.2f, 3.3f, 4.4f));
-		std::cout << mScale << std::endl;
-
-		std::cout << "Scale ok:: " << (mScale == gScale) << std::endl;
-
-
-		// translate compare
-		// ---------------------------------------
-		glm::mat4 gTranslate(1.0f);
-		gTranslate = glm::translate(gTranslate, glm::vec3(2.2f, 3.3f, 4.4f));
-		std::cout << gTranslate << std::endl;
-
-		Matrix4x4 mTranslate;
-		mTranslate.SetTranslation(Vector(2.2f, 3.3f, 4.4f));
-		std::cout << mTranslate << std::endl;
-		std::cout << "Translate ok: " << (mTranslate == gTranslate) << std::endl;
-
-
-		// scale & translate
-		// ----------------------------------------
-		glm::mat4 gTS(1.0f);
-		gTS = gTranslate * gScale;
-		std::cout << gTS << std::endl;
-
-		Matrix4x4 mTS;
-		mTS = mTranslate * mScale;
-		std::cout << mTS << std::endl;
-
-		std::cout << "Trans & Scale: " << (mTS == gTS) << std::endl;
-	
-
-		// LookAt
-		// ----------------------------------------
-		std::cout << "LookAt MATRIX" << std::endl;
-		glm::mat4 gLkAt(1.0f);
-		gLkAt = glm::lookAt(glm::vec3(1.0f, 2.0f, 3.0f), glm::vec3(3.0f, -2.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		std::cout << gLkAt << std::endl;
-
-		Point _position = Point(1.0f, 2.0f, 3.0f);
-		Vector _target = Vector(3.0f, -2.0f, 1.0f);
-		Vector _worldUp = Vector(0.0f, 1.0f, 0.0f);
-		Matrix4x4 mLkAt = GetView(_position, _target, _worldUp);
-		std::cout << mLkAt << std::endl;
-
-		std::cout << "LookAt MATRIX ok: " << (mLkAt == gLkAt) << std::endl;
+		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 1.5f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
+		m_Target_2 = std::make_shared<Box>(Point(+5.5f, 1.1f, -2.0f), Vector(1.0f, 1.0f, 1.0f));
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-
 	}
 
 	T01_FirstPrototipe_01::~T01_FirstPrototipe_01()
@@ -395,6 +329,7 @@ namespace test {
 
 		// Target Box
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+		renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 
 
 		
@@ -616,13 +551,7 @@ namespace test {
 			Matrix4x4 myScale;
 			myTranslate.SetTranslation(box->m_position);
 			myScale.SetScale(box->m_scale);
-			//model = myTranslate.ToGlm() * myScale.ToGlm();
 			model = (myTranslate * myScale).ToGlm();
-
-
-			//model = glm::mat4(1.0f);
-			//model = glm::translate(model, box->GetPosVec3());
-			//model = glm::scale(model, box->GetScaleVec3());
 
 
 			glm::mat4 mvp;
@@ -767,6 +696,12 @@ namespace test {
 			flLowestFraction = flTestFraction;
 		}
 
+		if (LineAABBIntersection(m_Target_2->m_aabbSize + m_Target_2->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
+
 		if (flLowestFraction < 1)
 			return true;
 
@@ -774,5 +709,3 @@ namespace test {
 	}
 
 }
-
-

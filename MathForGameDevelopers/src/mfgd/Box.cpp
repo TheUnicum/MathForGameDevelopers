@@ -2,7 +2,11 @@
 
 Box::Box() {}
 Box::Box(Point position, Vector scale)
-	: m_position(position), m_scale(scale) {}
+	: m_position(position), m_scale(scale)
+{
+	m_aabbSize.vecMin = Vector(-1.0f, -1.0f, -1.0f);
+	m_aabbSize.vecMax = Vector(+1.0f, +1.0f, +1.0f);
+}
 
 void Box::Update(float dt)
 {

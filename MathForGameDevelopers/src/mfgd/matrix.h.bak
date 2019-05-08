@@ -30,12 +30,7 @@ public:
 
 	// Set a transformation
 	void SetTranslation(const Vector& vecPos);
-	void SetRotation(float flAngle, const Vector& vecAxis);		// Assume te axis is a normalized vector
 	void SetScale(const Vector& vecScale);
-
-
-	// Trasform a position vector
-	Vector4d operator*(const Vector4d& v) const;
 
 	glm::mat4 ToGlm() const;
 
