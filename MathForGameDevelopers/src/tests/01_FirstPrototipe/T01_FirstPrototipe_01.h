@@ -88,7 +88,7 @@ namespace test {
 		void renderBillboard(float flRadius, Vector vecUp, Vector vecRight, glm::mat4 proj, glm::mat4 view, glm::mat4 model);
 
 		bool m_Shot_active;
-		std::shared_ptr<Box> m_Target_1, m_Target_2;
+		std::shared_ptr<Box> m_Target_1, m_Target_2, m_Target_3;
 
 		// Trace a line through the world to simulate a bullet
 		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);

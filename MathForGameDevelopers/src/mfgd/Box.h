@@ -13,7 +13,7 @@ class Box
 {
 public:
 	Box();
-	Box(Point position, Vector scale);
+	Box(Point position, Vector scale, float fangle, Vector rotation);
 
 	void Update(float dt);
 	void Gravity(glm::vec3 gravity, float dt);
@@ -28,6 +28,9 @@ private:
 public:
 	Point m_position;
 	Vector m_scale;
+	float m_f_angle;
+	Vector m_v3_rotation;
+
 
 	AABB m_aabbSize;
 
@@ -38,7 +41,7 @@ class Player : public Box
 {
 public:
 	Player();
-	Player(Point position, Vector scale);
+	Player(Point position, Vector scale, float fangle, Vector rotation);
 
 	void SetEAngle(float pitch, float yaw, float roll);
 private:

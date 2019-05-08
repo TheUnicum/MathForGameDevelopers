@@ -131,11 +131,12 @@ namespace test {
 		m_mesh_quad = std::make_unique<Mesh>(vertices_quad_3v_3n_2t, vec_quad_indices, msp_mTextures2);
 
 		// --------------------- New My Player--------------------------
-		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f));
+		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f), 0.0f, Vector(1.5f, 0.5f, 1.5f));
 
 		// --------------------- first Target with AABBB ---------------
-		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 1.5f, 4.0f), Vector(1.0f, 1.0f, 1.0f));
-		m_Target_2 = std::make_shared<Box>(Point(+5.5f, 1.1f, -2.0f), Vector(1.0f, 1.0f, 1.0f));
+		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
+		m_Target_2 = std::make_shared<Box>(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
+		m_Target_3 = std::make_shared<Box>(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
@@ -330,6 +331,7 @@ namespace test {
 		// Target Box
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+		renderCube(m_Target_3, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 
 
 		
@@ -546,13 +548,13 @@ namespace test {
 			model = glm::translate(model, box->GetPosVec3());
 			model = glm::scale(model, box->GetScaleVec3());
 
-
 			Matrix4x4 myTranslate;
+			Matrix4x4 myRotation;
 			Matrix4x4 myScale;
 			myTranslate.SetTranslation(box->m_position);
+			myRotation.SetRotation(box->m_f_angle, box->m_v3_rotation);
 			myScale.SetScale(box->m_scale);
-			model = (myTranslate * myScale).ToGlm();
-
+			model = (myTranslate * myRotation * myScale).ToGlm();
 
 			glm::mat4 mvp;
 			if (box == m_Player_01)
@@ -573,7 +575,6 @@ namespace test {
 			}
 			else
 				mvp = proj * view * model;
-
 
 			m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
 			m_ShaderMesh->SetUniformMat4f("u_model", model);
@@ -697,6 +698,12 @@ namespace test {
 		}
 
 		if (LineAABBIntersection(m_Target_2->m_aabbSize + m_Target_2->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
+
+		if (LineAABBIntersection(m_Target_3->m_aabbSize + m_Target_3->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
 			vecIntersection = vecTestIntersection;
 			flLowestFraction = flTestFraction;

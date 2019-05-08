@@ -1,8 +1,8 @@
 #include "Box.h"
 
 Box::Box() {}
-Box::Box(Point position, Vector scale)
-	: m_position(position), m_scale(scale)
+Box::Box(Point position, Vector scale, float angle, Vector rotation)
+	: m_position(position), m_scale(scale), m_f_angle(angle), m_v3_rotation(rotation)
 {
 	m_aabbSize.vecMin = Vector(-1.0f, -1.0f, -1.0f);
 	m_aabbSize.vecMax = Vector(+1.0f, +1.0f, +1.0f);
@@ -50,8 +50,8 @@ Player::Player()
 {
 }
 
-Player::Player(Point position, Vector scale)
-	:Box(position, scale)
+Player::Player(Point position, Vector scale, float angle, Vector rotation)
+	:Box(position, scale, angle, rotation)
 {
 }
 
