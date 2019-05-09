@@ -20,3 +20,5 @@ bool ClipLine(int d, const AABB& aabbBox, const Vector& v0, const Vector& v1, fl
 bool LineAABBIntersection(const AABB& aabbBox, const Vector& v0, const Vector& v1,
 	Vector& vecIntersection, float & flFraction);
 
+// // Line-Plane Intersection
+bool LinePlaneIntersection(const Vector& n, const Point& c, const Vector& x0, const Vector& x1, Vector& vecIntersection, float& flFraction);

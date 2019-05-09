@@ -66,3 +66,21 @@ bool LineAABBIntersection(const AABB & aabbBox, const Vector & v0, const Vector 
 	return true;
 }
 
+// // Line-Plane Intersection
+bool LinePlaneIntersection(const Vector& n, const Point& c, const Vector& x0, const Vector& x1, Vector& vecIntersection, float& flFraction)
+{
+	// n - plane normal
+	// c - any point  in the plane
+	// x0 - the beginning of our line
+	// x1 - the end of our line
+
+	Vector v = x1 - x0;
+	Vector w = c - x0;
+
+	float k = w.Dot(n) / v.Dot(n);
+	vecIntersection = x0 + k * v;
+
+	flFraction = k;
+
+	return k >= 0 && k <= 1;
+}

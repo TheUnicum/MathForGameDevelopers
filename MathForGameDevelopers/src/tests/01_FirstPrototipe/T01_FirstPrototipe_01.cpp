@@ -718,6 +718,13 @@ namespace test {
 			flLowestFraction = flTestFraction;
 		}
 
+		//bool LinePlaneIntersection(const Vector& n, Point& c, const Vector& x0, const Vector& x1, Vector& vecIntersection, float& flFraction);
+		if (LinePlaneIntersection(Vector(0.0f, 1.0f, 0.0f), Point(0.0f, 0.0f, 0.0f), v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		{
+			vecIntersection = vecTestIntersection;
+			flLowestFraction = flTestFraction;
+		}
+
 		if (flLowestFraction < 1)
 			return true;
 
