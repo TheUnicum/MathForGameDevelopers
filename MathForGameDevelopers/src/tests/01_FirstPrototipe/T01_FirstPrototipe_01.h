@@ -23,6 +23,8 @@
 #include "mfgd/Box.h"
 #include "mfgd/matrix.h"
 
+#define MAX_CHARACTERS 1000
+
 namespace test {
 
 	class T01_FirstPrototipe_01 : public Test
@@ -94,6 +96,12 @@ namespace test {
 		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);
 
 		float m_flTimeCreated = 0.0f;
+
+
+
+		Box* m_apEntityList[MAX_CHARACTERS];
+
+		Box* CreateCharacter(Point position, Vector scale, float angle, Vector rotation);
 
 	};
 

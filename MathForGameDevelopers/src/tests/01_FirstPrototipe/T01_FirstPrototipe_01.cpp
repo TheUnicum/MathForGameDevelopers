@@ -138,6 +138,14 @@ namespace test {
 		m_Target_2 = std::make_shared<Box>(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
 		m_Target_3 = std::make_shared<Box>(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
 
+		
+		CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
+		CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
+		CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
+
+
+
+
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
 		GLCall(glEnable(GL_BLEND));
@@ -332,6 +340,13 @@ namespace test {
 		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		renderCube(m_Target_3, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+
+		for (size_t i = 0; i < MAX_CHARACTERS; i++)
+		{
+			//renderCube(m_apEntityList[i], glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+
+		}
+
 
 
 		
@@ -729,6 +744,34 @@ namespace test {
 			return true;
 
 		return false;
+	}
+
+	Box * T01_FirstPrototipe_01::CreateCharacter(Point position, Vector scale, float angle, Vector rotation)
+	{
+		size_t iSpot = ~0;
+
+		// Find a spot in my entity list that's empty
+		for (size_t i = 0; i < MAX_CHARACTERS; i++)
+		{
+			if (!m_apEntityList[i])
+			{
+				iSpot = i;
+				break;
+			}
+		}
+
+		if (iSpot == ~0)
+			// Couldn't find a spot for the new guy! Return null instead.
+			return nullptr;
+
+		m_apEntityList[iSpot] = new Box(position, scale, angle, rotation);
+		
+		static int iParity = 0;
+
+		m_apEntityList[iSpot]->m_iParity = iParity++;
+		m_apEntityList[iSpot]->m_iIndex = iSpot;
+
+		return m_apEntityList[iSpot];
 	}
 
 }

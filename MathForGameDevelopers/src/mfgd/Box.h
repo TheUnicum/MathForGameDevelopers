@@ -27,6 +27,9 @@ public:
 
 private:
 public:
+	int m_iIndex;
+	int m_iParity;
+
 	Point m_position;
 	Vector m_scale;
 	float m_f_angle;
