@@ -23,6 +23,7 @@
 #include "mfgd/Box.h"
 #include "mfgd/matrix.h"
 
+
 namespace test {
 
 	class T01_FirstPrototipe_01 : public Test
@@ -95,6 +96,7 @@ namespace test {
 		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection, Box*& pHit);
 
 		float m_flTimeCreated = 0.0f;
+
 	};
 
 }

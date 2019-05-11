@@ -153,6 +153,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\mfgd\AABB.cpp" />
     <ClCompile Include="src\mfgd\Box.cpp" />
+    <ClCompile Include="src\mfgd\Frustum.cpp" />
     <ClCompile Include="src\mfgd\matrix.cpp" />
     <ClCompile Include="src\mfgd\mfgd_Classes.cpp" />
     <ClCompile Include="src\mfgd\mfgd_EulerAngle.cpp" />
@@ -182,9 +183,11 @@
   <ItemGroup>
     <ClInclude Include="src\mfgd\AABB.h" />
     <ClInclude Include="src\mfgd\Box.h" />
+    <ClInclude Include="src\mfgd\Frustum.h" />
     <ClInclude Include="src\mfgd\matrix.h" />
     <ClInclude Include="src\mfgd\mfgd_Classes.h" />
     <ClInclude Include="src\mfgd\mfgd_EulerAngle.h" />
+    <ClInclude Include="src\mfgd\plane.h" />
     <ClInclude Include="src\mfgd\Vector4d.h" />
     <ClInclude Include="src\opengl\Camera.h" />
     <ClInclude Include="src\opengl\FrameBuffer.h" />
