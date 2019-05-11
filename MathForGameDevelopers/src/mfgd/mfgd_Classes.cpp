@@ -103,6 +103,16 @@ Point::Point()
 Point::Point(float x, float y, float z)
 	: x(x), y(y), z(z) {}
 
+float Point::Length() const
+{
+	return std::sqrt(x*x + y * y + z * z);
+}
+
+float Point::LengthSqr() const
+{
+	return (x*x + y * y + z * z);
+}
+
 Point Point::AddVector(Vector v)
 {
 	Point p2;

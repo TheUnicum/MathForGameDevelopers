@@ -124,6 +124,75 @@ void Box::RemoveCharacter(Box * pCharacter)
 	m_apEntityList[iSpot] = nullptr;
 }
 
+void Box::MergeSortRenderSubList(std::vector<Box*>& apRenderList, size_t iStart, size_t iEnd, Vector camPos)
+{
+	// iStart the index of the first index that we are to sort. iEnd is the index+1 of the last index we are to sort
+	size_t iLength = iEnd - iStart;
+
+	if (iLength <= 1)
+	{
+		// We are in a base case of one item. We're sorted! Return.
+		return;
+	}
+	else if (iLength == 2)
+	{
+		// We are in a base case of two items. If the first one i bigger than the second, swap them.
+		float flLeftDistanceSqr = (apRenderList[iStart]->m_position - camPos).LengthSqr();
+		float flRightDistanceSqr = (apRenderList[iStart + 1 ]->m_position - camPos).LengthSqr();
+
+		// We can compare square distances just like regular disatance, ant they're faster to calculate.
+		if (flLeftDistanceSqr > flRightDistanceSqr)
+			std::swap(apRenderList[iStart], apRenderList[iStart + 1]);
+
+		// Now we're sorted!
+		return;
+	}
+
+	//0, 1, 2, 3, 4
+	//0+(4+1)/2 = 2
+	//	0-1
+	//	2-3-4
+
+	// We aren't in a base case yet. Split the list in two.
+	size_t iMiddle = (iStart - iEnd) / 2;
+	MergeSortRenderSubList(apRenderList, iStart, iMiddle, camPos);
+	MergeSortRenderSubList(apRenderList, iMiddle, iEnd, camPos);
+
+	// Merge the two sub-lists together by plucking off the lowest element.
+	// First make a copy of the list
+	std::vector<Box*> apRenderListCopy = apRenderList;
+	
+	size_t iLeft = iStart;
+	size_t iRight = iMiddle;
+	size_t iOutPut = iStart;
+	while (true)
+	{
+		float flLeftDistanceSqr = (apRenderListCopy[iLeft]->m_position - camPos).LengthSqr();
+		float flRightDistanceSqr = 0;
+		if (iRight != iEnd)
+			flRightDistanceSqr = (apRenderListCopy[iRight]->m_position - camPos).LengthSqr();
+
+		// We can compare square distances just like regular disatance, ant they're faster to calculate.
+		bool bUseLeft = flLeftDistanceSqr < flRightDistanceSqr;
+		if (iRight == iEnd)
+			bUseLeft = true;
+		else if (iLeft == iMiddle)
+			bUseLeft = false;
+
+		if (bUseLeft)
+			apRenderList[iOutPut++] = apRenderListCopy[iLeft++];
+		else
+			apRenderList[iOutPut++] = apRenderListCopy[iRight++];
+
+		// If we're reached the end of both sub-lists, break form the loop.
+		if (iLeft == iMiddle && iRight == iEnd)
+			break;
+	}
+
+	// Our sub-list is sorted! Return
+
+}
+
 Box* Box::m_apEntityList[MAX_CHARACTERS];
 
 

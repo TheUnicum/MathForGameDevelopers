@@ -9,6 +9,8 @@
 //#include "glm/gtc/matrix_transform.hpp"
 //#include "glm/gtc/type_ptr.hpp"
 
+#include <vector>
+
 //148.42
 #define MAX_CHARACTERS 1000
 
@@ -55,6 +57,7 @@ public:
 	static Box* m_apEntityList[];
 	static Box* CreateCharacter(Point position, Vector scale, float angle, Vector rotation);
 	static void RemoveCharacter(Box* pCharacter);
+	static void MergeSortRenderSubList(std::vector<Box*>& apRenderList, size_t iStart, size_t iEnd, Vector camPos);
 };
 
 

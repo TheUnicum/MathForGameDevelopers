@@ -55,6 +55,9 @@ public:
 	Point();
 	Point(float x, float y, float z);
 
+	float Length() const;
+	float LengthSqr() const;
+
 	Point AddVector(Vector v);
 
 	Point operator-() const;
