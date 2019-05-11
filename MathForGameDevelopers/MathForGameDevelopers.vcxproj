@@ -182,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mfgd\AABB.h" />
+    <ClInclude Include="src\mfgd\axisangle.h" />
     <ClInclude Include="src\mfgd\Box.h" />
     <ClInclude Include="src\mfgd\Frustum.h" />
     <ClInclude Include="src\mfgd\matrix.h" />

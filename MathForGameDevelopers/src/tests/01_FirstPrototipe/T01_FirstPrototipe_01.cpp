@@ -5,6 +5,8 @@
 #include "mfgd/AABB.h"
 #include "mfgd/Vector4d.h"
 
+#include "mfgd/axisangle.h"
+
 namespace test {
 
 	T01_FirstPrototipe_01::T01_FirstPrototipe_01()

@@ -206,6 +206,9 @@
     <ClInclude Include="src\mfgd\Frustum.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="src\mfgd\axisangle.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\ToDoList.txt" />
