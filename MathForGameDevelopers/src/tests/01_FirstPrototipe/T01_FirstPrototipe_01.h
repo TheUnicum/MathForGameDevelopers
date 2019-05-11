@@ -23,8 +23,6 @@
 #include "mfgd/Box.h"
 #include "mfgd/matrix.h"
 
-#define MAX_CHARACTERS 1000
-
 namespace test {
 
 	class T01_FirstPrototipe_01 : public Test
@@ -83,26 +81,20 @@ namespace test {
 
 		//std::shared_ptr<Box> m_Box_01, m_Box_02;
 		void renderCube(std::shared_ptr<Box> box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on = false);
+		void renderCube(Box* box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on = false);
 
 		std::shared_ptr<Player> m_Player_01;
 
 		void renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view);
 		void renderBillboard(float flRadius, Vector vecUp, Vector vecRight, glm::mat4 proj, glm::mat4 view, glm::mat4 model);
 
-		bool m_Shot_active;
+		bool m_Shot_active, m_Shot_active_i_1;
 		std::shared_ptr<Box> m_Target_1, m_Target_2, m_Target_3;
 
 		// Trace a line through the world to simulate a bullet
-		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection);
+		bool TraceLine(const Vector& v0, const Vector& v1, Vector& vecIntersection, Box*& pHit);
 
 		float m_flTimeCreated = 0.0f;
-
-
-
-		Box* m_apEntityList[MAX_CHARACTERS];
-
-		Box* CreateCharacter(Point position, Vector scale, float angle, Vector rotation);
-
 	};
 
 }

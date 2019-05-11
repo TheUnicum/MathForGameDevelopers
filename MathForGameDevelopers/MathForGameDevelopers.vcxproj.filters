@@ -198,4 +198,7 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\ToDoList.txt" />
+  </ItemGroup>
 </Project>

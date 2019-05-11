@@ -9,6 +9,8 @@
 //#include "glm/gtc/matrix_transform.hpp"
 //#include "glm/gtc/type_ptr.hpp"
 
+//148.42
+#define MAX_CHARACTERS 1000
 
 class Box
 {
@@ -24,6 +26,8 @@ public:
 	inline Vector GetPosition() const { return m_position; }
 	inline glm::vec3 GetPosVec3() const { return glm::vec3(m_position.x, m_position.y, m_position.z); }
 	inline glm::vec3 GetScaleVec3() const { return glm::vec3(m_scale.x, m_scale.y, m_scale.z); }
+
+	void TakeDamage(int iDamage);
 
 private:
 public:
@@ -43,7 +47,16 @@ public:
 	//utility
 	Matrix4x4 m_Transform;
 	Matrix4x4 m_TransformInverse;
+
+	bool m_bTakesDamage;
+	int m_iHealth;
+
+public:
+	static Box* m_apEntityList[];
+	static Box* CreateCharacter(Point position, Vector scale, float angle, Vector rotation);
+	static void RemoveCharacter(Box* pCharacter);
 };
+
 
 class Player : public Box
 {

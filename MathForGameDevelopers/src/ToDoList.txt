@@ -1,0 +1,2 @@
+
+- MFGD28 - incomplete missing <Get Character> and athers funscions

@@ -133,16 +133,11 @@ namespace test {
 		// --------------------- New My Player--------------------------
 		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f), 0.0f, Vector(1.5f, 0.5f, 1.5f));
 
-		// --------------------- first Target with AABBB ---------------
-		m_Target_1 = std::make_shared<Box>(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
-		m_Target_2 = std::make_shared<Box>(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
-		m_Target_3 = std::make_shared<Box>(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
-
+		// --------------------- first Target with AABBB ---------------		
+		Box::CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
+		Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
+		Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
 		
-		CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
-		CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
-		CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
-
 
 
 
@@ -337,14 +332,13 @@ namespace test {
 		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, myView.ToGlm());
 
 		// Target Box
-		renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-		renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-		renderCube(m_Target_3, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-
+		//renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+		//renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
+		//renderCube(m_Target_3, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		for (size_t i = 0; i < MAX_CHARACTERS; i++)
 		{
-			//renderCube(m_apEntityList[i], glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-
+			if (Box::m_apEntityList[i])
+				renderCube(Box::m_apEntityList[i], glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		}
 
 
@@ -352,13 +346,15 @@ namespace test {
 		
 		if (m_Shot_active)
 		{
+
 			Vector p_start = m_Player_01->m_position;
 			Vector p_end = m_Player_01->m_EAngle.ToVector() * 100;
 			
 			Vector vecIntersection;
 			//TraceLine
 		
-			if (TraceLine(p_start, p_start + p_end, vecIntersection))
+			Box* pHit = nullptr;
+			if (TraceLine(p_start, p_start + p_end, vecIntersection, pHit))
 			{
 				float flPuffTime = 0.05f;
 				float flTimeOver = m_flTimeCreated + flPuffTime;
@@ -377,6 +373,11 @@ namespace test {
 				Vector pos_end = vecIntersection;
 				//renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(0.05f), glm::vec3(1.0, 1.0, .0f), proj, view);
 				renderPop(glm::vec3(pos_end.x, pos_end.y, pos_end.z), glm::vec3(flSize), glm::vec3(1.0, iOrange, 0.0f), proj, view);
+
+				if (pHit && !m_Shot_active_i_1)
+					pHit->TakeDamage(100);
+	
+
 			}
 			else
 			{
@@ -389,6 +390,9 @@ namespace test {
 		}
 		else
 			m_flTimeCreated = (float)glfwGetTime();
+
+
+		m_Shot_active_i_1 = m_Shot_active;
 
 	}
 
@@ -615,6 +619,55 @@ namespace test {
 
 	}
 
+	void T01_FirstPrototipe_01::renderCube(Box* box, glm::vec3 color, glm::mat4 proj, glm::mat4 view, bool sprite_on)
+	{
+
+		//if (sprite_on)
+		if (true)
+		{
+			m_ShaderMesh->Bind();
+			// Model Matrix
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, box->GetPosVec3());
+			model = glm::scale(model, box->GetScaleVec3());
+
+			Matrix4x4 myScale, myRotation, myTranslate;
+			myScale.SetScale(box->m_scale);
+			myRotation.SetRotation(box->m_f_angle, box->m_v3_rotation);
+			myTranslate.SetTranslation(box->m_position);
+			box->m_Transform = myTranslate * myRotation * myScale;
+			model = (box->m_Transform).ToGlm();
+
+			// calculate TransformInverse for AABB line interception in Local-Space
+			// T^-1 = (TRS)^-1 = (S^-1) * (R^-1) * (T^-1) = (
+			Matrix4x4 myScaleInverse, myRotationInverse, myTranslateInverse;
+			myScaleInverse.SetScale(1 / box->m_scale);
+			myRotationInverse = myRotation.Transposed();
+			myTranslateInverse.SetTranslation(-box->m_position);	//Point operator-() const;
+			box->m_TransformInverse = myScaleInverse * myRotationInverse * myTranslateInverse;
+
+
+			glm::mat4 mvp;
+			mvp = proj * view * model;
+
+			m_ShaderMesh->SetUniformMat4f("u_mvp", mvp);
+			m_ShaderMesh->SetUniformMat4f("u_model", model);
+			m_ShaderMesh->SetUniformMat3f("u_transInvers_model", glm::mat3(glm::transpose(glm::inverse(model))));
+
+			m_ShaderMesh->SetUniform3fv("u_Box_color", color);
+
+			m_ShaderMesh->SetUniform3fv("u_lightColor", m_lightColor);
+			m_ShaderMesh->SetUniform3fv("u_lightPos", m_lightPos);
+			//m_ShaderMesh->SetUniform3fv("u_viewPos", m_camera->GetCamPosition());
+
+			// Draw MESH
+			m_mesh->Draw(m_ShaderMesh);
+		}
+
+
+	}
+
+
 	void T01_FirstPrototipe_01::renderShot(Vector p_start, Vector p_end, glm::mat4 proj, glm::mat4 view)
 	{
 		float positions[] = {
@@ -707,71 +760,40 @@ namespace test {
 	}
 
 	// Trace a line through the world to simulate, eg, a bullet
-	bool T01_FirstPrototipe_01::TraceLine(const Vector & v0, const Vector & v1, Vector & vecIntersection)
+	bool T01_FirstPrototipe_01::TraceLine(const Vector & v0, const Vector & v1, Vector & vecIntersection, Box*& pHit)
 	{
 		float flLowestFraction = 1;
 
 		Vector vecTestIntersection;
 		float flTestFraction;
+		pHit = nullptr;
 
-		//if (LineAABBIntersection(m_Target_1->m_aabbSize + m_Target_1->m_position, v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
-		if (LineAABBIntersection(m_Target_1->m_aabbSize, m_Target_1->m_TransformInverse*v0, m_Target_1->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+		// Check Box collision
+		for (size_t i = 0; i < MAX_CHARACTERS; i++)
 		{
-			vecIntersection = m_Target_1->m_Transform * vecTestIntersection;
-			flLowestFraction = flTestFraction;
+			if (Box::m_apEntityList[i])
+			{
+				if (LineAABBIntersection(Box::m_apEntityList[i]->m_aabbSize, Box::m_apEntityList[i]->m_TransformInverse*v0, Box::m_apEntityList[i]->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
+				{
+					vecIntersection = Box::m_apEntityList[i]->m_Transform * vecTestIntersection;
+					flLowestFraction = flTestFraction;
+					pHit = Box::m_apEntityList[i];
+				}
+			}
 		}
 
-		if (LineAABBIntersection(m_Target_2->m_aabbSize, m_Target_2->m_TransformInverse*v0, m_Target_2->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
-		{
-			vecIntersection = m_Target_2->m_Transform * vecTestIntersection;
-			flLowestFraction = flTestFraction;
-		}
-
-		if (LineAABBIntersection(m_Target_3->m_aabbSize, m_Target_3->m_TransformInverse*v0, m_Target_3->m_TransformInverse*v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
-		{
-			vecIntersection = m_Target_3->m_Transform * vecTestIntersection;
-			flLowestFraction = flTestFraction;
-		}
-
-		//bool LinePlaneIntersection(const Vector& n, Point& c, const Vector& x0, const Vector& x1, Vector& vecIntersection, float& flFraction);
+		// Chack plane collision
 		if (LinePlaneIntersection(Vector(0.0f, 1.0f, 0.0f), Point(0.0f, 0.0f, 0.0f), v0, v1, vecTestIntersection, flTestFraction) && flTestFraction < flLowestFraction)
 		{
 			vecIntersection = vecTestIntersection;
 			flLowestFraction = flTestFraction;
+			pHit = nullptr;
 		}
 
 		if (flLowestFraction < 1)
 			return true;
 
 		return false;
-	}
-
-	Box * T01_FirstPrototipe_01::CreateCharacter(Point position, Vector scale, float angle, Vector rotation)
-	{
-		size_t iSpot = ~0;
-
-		// Find a spot in my entity list that's empty
-		for (size_t i = 0; i < MAX_CHARACTERS; i++)
-		{
-			if (!m_apEntityList[i])
-			{
-				iSpot = i;
-				break;
-			}
-		}
-
-		if (iSpot == ~0)
-			// Couldn't find a spot for the new guy! Return null instead.
-			return nullptr;
-
-		m_apEntityList[iSpot] = new Box(position, scale, angle, rotation);
-		
-		static int iParity = 0;
-
-		m_apEntityList[iSpot]->m_iParity = iParity++;
-		m_apEntityList[iSpot]->m_iIndex = iSpot;
-
-		return m_apEntityList[iSpot];
 	}
 
 }
