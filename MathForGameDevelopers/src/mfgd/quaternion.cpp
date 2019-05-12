@@ -20,6 +20,16 @@ Quaternion::Quaternion(const Vector& n, float a)
 	z = n.z*sin(a / 2);
 }
 
+const Quaternion Quaternion::Inverted() const
+{
+	Quaternion q;
+	q.w = w;
+	q.x = -x;
+	q.y = -y;
+	q.z = -z;
+	return q;
+}
+
 std::ostream & operator<<(std::ostream & stream, const Quaternion & q)
 {
 	stream << "Qtn: (" << q.w << ", " << q.x << ", " << q.y << ", " << q.z << ")";
