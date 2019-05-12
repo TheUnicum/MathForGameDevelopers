@@ -216,14 +216,29 @@ float Approch(float flGoal, float flCurrent, float dVelocity)
 
 }
 
+
 // MFGD 17 - Explosions! (The Remap Function)
 // ------------------------------------------------------
 float Remap(float x, float t1, float t2, float s1, float s2)
 {
 	float yellow = (x - t1) / (t2 - t1);		// Map [t1, t2] -> [ 0,  1]
-	float green = yellow * (s2 - s1) * s1;		// Map [ 0,  1] -> [s1, s2]
+	float green = yellow * (s2 - s1) + s1;		// Map [ 0,  1] -> [s1, s2]
 	return green;
 }
+
+
+// MFGD 37 (The RemapClamp Function)
+// ------------------------------------------------------
+float RemapClamp(float x, float t1, float t2, float s1, float s2)
+{
+	if (x < t1)
+		return s1;
+	if (x > t2)
+		return s2;
+
+	return Remap(x, t1, t2, s1, s2);
+}
+
 
 // MFGD 18 - Bullet Whizzes (Projections)
 // https://youtu.be/VTV1GTrrtBQ?list=PLW3Zl3wyJwWOpdhYedlD-yCB7WQoHf-My

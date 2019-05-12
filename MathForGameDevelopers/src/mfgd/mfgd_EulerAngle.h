@@ -10,6 +10,7 @@ public:
 
 public:
 	Vector ToVector() const;
+	void ToAxisAngle(Vector& vecAxis, float& flAngle) const;
 	void Normalize();
 
 public:

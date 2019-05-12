@@ -4,6 +4,7 @@
 #include "mfgd/mfgd_EulerAngle.h"
 #include "mfgd/AABB.h"
 #include "mfgd/matrix.h"
+#include "mfgd/quaternion.h"
 
 #include "glm/glm.hpp"
 //#include "glm/gtc/matrix_transform.hpp"
@@ -19,6 +20,9 @@ class Box
 public:
 	Box();
 	Box(Point position, Vector scale, float fangle, Vector rotation);
+
+	void SetRotation(const EAngle& angRotation);
+	void SetRotation(const Quaternion& qRotation);
 
 	void Update(float dt);
 	void Gravity(glm::vec3 gravity, float dt);

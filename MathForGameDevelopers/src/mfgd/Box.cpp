@@ -8,6 +8,21 @@ Box::Box(Point position, Vector scale, float angle, Vector rotation)
 	m_aabbSize.vecMax = Vector(+1.0f, +1.0f, +1.0f);
 }
 
+
+void Box::SetRotation(const EAngle & angRotation)
+{
+	//float m_f_angle;
+	//Vector m_v3_rotation;
+	angRotation.ToAxisAngle(m_v3_rotation, m_f_angle);
+}
+
+
+void Box::SetRotation(const Quaternion & qRotation)
+{
+	qRotation.ToAxisAngle(m_v3_rotation, m_f_angle);
+}
+
+
 void Box::Update(float dt)
 {
 	m_position = m_position + m_velocity * dt;

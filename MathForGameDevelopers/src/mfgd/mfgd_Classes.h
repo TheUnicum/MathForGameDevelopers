@@ -81,6 +81,9 @@ float Approch(float flGoal, float flCurrent, float dVelocity);
 
 // MFGD 17 - Explosions! (The Remap Function)
 float Remap(float x, float t1, float t2, float s1, float s2);
+// MFGD 37 (The RemapClamp Function)
+float RemapClamp(float x, float t1, float t2, float s1, float s2);
+
 
 // MFGD 18 - Bullet Whizzes (Projections)
 float BulletWhizzes(Point player, Point enemy, Vector direction);

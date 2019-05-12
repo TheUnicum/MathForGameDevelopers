@@ -6,6 +6,7 @@
 #include "mfgd/Vector4d.h"
 
 #include "mfgd/axisangle.h"
+#include "mfgd/quaternion.h"
 
 namespace test {
 
@@ -139,7 +140,10 @@ namespace test {
 		Box::CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
 		Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
 		Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
-		
+
+
+		Box::CreateCharacter(Point(-1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
+		Box::CreateCharacter(Point(+1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
 
 
 
@@ -332,6 +336,32 @@ namespace test {
 		renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, view);
 		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, glm::transpose(myView.ToGlm()));
 		//renderCube(m_Player_01, glm::vec3(0.0, 0.0, 1.0f), proj, myView.ToGlm());
+
+
+		// slerp euler
+		float flTime = (float)sin(glfwGetTime());
+		float t = RemapClamp(flTime, -0.8f, 0.8f, 0, 1);
+
+		EAngle angStart(0.0f, 90.0f, 0.0f);
+		EAngle angEnd(90.0f, 0.0f, 90.0f);
+
+		Quaternion qStart(Vector(0, 1, 0), 90);
+		Quaternion qEnd = Quaternion(Vector(0, 0, 1), 90) * Quaternion(Vector(1, 0, 0), 90);
+		
+		// I'm converting the Eulers to Vectors so that I can do a "slerp" on them.
+		// I'm not creating operator overloads for EAngle since we really shouldn't
+		// be doing this operation on mthe anyways.
+		Vector vecStart(angStart.p, angStart.y, angStart.r);
+		Vector vecEnd(angEnd.p, angEnd.y, angEnd.r);
+		Vector vecCurrent = vecStart + (vecEnd - vecStart) * t; // Here's the "slerp"
+		EAngle angCurrent(vecCurrent.x, vecCurrent.y, vecCurrent.z);
+
+		//Box::m_apEntityList[3]->m_v3_rotation
+		if (Box::m_apEntityList[3])
+			Box::m_apEntityList[3]->SetRotation(angCurrent);
+		if (Box::m_apEntityList[4])
+			Box::m_apEntityList[4]->SetRotation(qStart.Slerp(qEnd, t));
+
 
 		// Target Box
 		//renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);

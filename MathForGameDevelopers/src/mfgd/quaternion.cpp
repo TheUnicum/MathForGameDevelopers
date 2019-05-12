@@ -82,7 +82,7 @@ const Quaternion Quaternion::operator^(float t) const
 	ToAxisAngle(n, a);
 
 	// Scale the angle by t
-	float at = a * t;
+	float at = a * t / 2;	// ---------------------------------<< correction ?
 
 	// Make a new quaternion out of the new value
 	return Quaternion(n, at);
@@ -96,7 +96,7 @@ const Quaternion Quaternion::Slerp(const Quaternion& other, float t) const
 	Quaternion r = other;
 	
 	// This is the quaternion equation!
-
+	//return ((r * q.Inverted()) ^ t) * q;
 	// |--------------------------------------------|
 	// |return ((r * q.Inverted()) ^ t) * q;		|
 	// |--------------------------------------------|
@@ -158,7 +158,6 @@ void Quaternion::ToAxisAngle(Vector& vecAxis, float& flAngle) const
 
 	// Convert to degrees
 	flAngle *= 180 / (float(M_PI));
-
 }
 
 
