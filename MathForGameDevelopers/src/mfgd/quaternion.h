@@ -18,6 +18,7 @@ public:
 public:
 	const Quaternion Inverted() const;
 	const Quaternion operator*(const Quaternion& q) const;
+	const Vector operator*(const Vector& V) const;
 
 public:
 	float w;

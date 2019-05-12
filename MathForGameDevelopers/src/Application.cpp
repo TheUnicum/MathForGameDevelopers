@@ -378,6 +378,26 @@ void TestMatrixTia()
 	std::cout << "(Rot 90 degr (1, 0, 0)).Inverted: ->" << q90.Inverted() << std::endl;
 	std::cin.get();
 
+
+	std::cout << "\n--------Quat. Moltiplications------ " << std::endl;
+	Quaternion q1 = Quaternion(Vector(0.0f, 1.0f, 0.0f), 90.0f);
+	Quaternion q2 = Quaternion(Vector(1.0f, 0.0f, 0.0f), 45.0f);
+	Quaternion q3 = q2 * q1;	// The first rotation should go last.
+	std::cout << "Quaternion q1 V(0.0f, 1.0f, 0.0f), 90.0f): " << q1 << std::endl;
+	std::cout << "Quaternion q2 V(1.0f, 0.0f, 0.0f), 45.0f): " << q2 << std::endl;
+	std::cout << "Quaternion q3, q2 * q1 : " << q3 << std::endl;
+
+	//
+	std::cout << std::endl;
+	Vector vecRotated = q3 * Vector(1.0f, 0.0f, 0.0f);
+	std::cout << "Rotating (1, 0, 0) with q3\n: " << vecRotated << std::endl << std::endl;
+	
+	vecRotated = q1 * Vector(1.0f, 0.0f, 0.0f);
+	std::cout << "Rotating (1, 0, 0) with q1\n: " << vecRotated << std::endl << std::endl;
+	vecRotated = q2 * vecRotated;
+	std::cout << "vecRotated with q2\n: " << vecRotated << std::endl;
+	
+	std::cin.get();
 	std::cout << "\n---End-----Quaternions------ \n" << std::endl;
 	// ---- End -------------
 }

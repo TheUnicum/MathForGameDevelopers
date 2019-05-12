@@ -48,6 +48,30 @@ const Quaternion Quaternion::operator*(const Quaternion & q) const
 	return r;
 }
 
+// Rotate a vector with this quaternion.
+// The basic equation is qpq* (the * means inverse) but we use a simplified version of equation.
+const Vector Quaternion::operator*(const Vector & V) const
+{
+	Quaternion p;
+	p.w = 0;
+	p.v = V;
+
+	// Could do it it this way:
+	/*
+	const Quaternion& q = (*this);
+	return (q * p * q.Inverted()).v;
+	*/
+
+	// But let's optimize it a bit instead.
+
+	/*
+	qpq* = p + 2w(v x V) + 2 * ( v x (v x V))
+	*/
+
+	Vector vcV = v.Cross(V);
+	return V + vcV * (2 * w) + v.Cross(vcV) * 2;
+}
+
 std::ostream & operator<<(std::ostream & stream, const Quaternion & q)
 {
 	stream << "Qtn: (" << q.w << ", " << q.v.x << ", " << q.v.y << ", " << q.v.z << ")";
