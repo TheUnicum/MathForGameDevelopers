@@ -14,6 +14,7 @@
 #include "tests/01_FirstPrototipe/T01_FirstPrototipe_01.h"
 
 #include "mfgd/mfgd_Classes.h"
+#include "mfgd/quaternion.h"
 
 // Functions Declaration
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -353,5 +354,21 @@ void TestMatrixTia()
 	//std::cout << "Vector Translate ok: " << (mMult == gMult) << "\n\n";
 
 
+	// Quaternions
+	// ----------------------------------------
+	std::cout << "\n--------Quaternions------ " << std::endl;
+	std::cin.get();
+	std::cout << "Rot   0 degrees around (1, 0, 0): ->" << Quaternion(Vector(1.0f, 0.0f, 0.0f), 0.0f) << std::endl;
+	std::cin.get();
+	std::cout << "Rot  90 degrees around (1, 0, 0): ->" << Quaternion(Vector(1.0f, 0.0f, 0.0f), 90.0f) << std::endl;
+	std::cin.get();
+	std::cout << "Rot 180 degrees around (0, 1, 0): ->" << Quaternion(Vector(1.0f, 0.0f, 0.0f), 180.0f) << std::endl;
+	std::cin.get();
+	std::cout << "Rot  90 degrees around (0, 1, 0): ->" << Quaternion(Vector(0.0f, 1.0f, 0.0f), 90.0f) << std::endl;
+	std::cin.get();
+	std::cout << "Rot 180 degrees around (0, 1, 0): ->" << Quaternion(Vector(0.0f, 1.0f, 0.0f), 180.0f) << std::endl;
+	std::cin.get();
+
+	std::cout << "\n---End-----Quaternions------ \n" << std::endl;
 	// ---- End -------------
 }
