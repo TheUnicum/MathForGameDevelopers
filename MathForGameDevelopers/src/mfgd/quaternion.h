@@ -17,9 +17,11 @@ public:
 
 public:
 	const Quaternion Inverted() const;
+	const Quaternion operator*(const Quaternion& q) const;
 
 public:
-	float w, x, y, z;
+	float w;
+	Vector v; // x, y, z;
 };
 
 // utility overload std::cout
