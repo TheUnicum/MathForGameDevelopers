@@ -19,6 +19,10 @@ public:
 	const Quaternion Inverted() const;
 	const Quaternion operator*(const Quaternion& q) const;
 	const Vector operator*(const Vector& V) const;
+	const Quaternion operator^(float t) const;
+	const Quaternion Slerp(const Quaternion& other, float t) const;
+
+	void ToAxisAngle(Vector& vecAxis, float& flAngle) const;
 
 public:
 	float w;
