@@ -137,13 +137,17 @@ namespace test {
 		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f), 0.0f, Vector(1.5f, 0.5f, 1.5f));
 
 		// --------------------- first Target with AABBB ---------------		
-		Box::CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
-		Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
-		Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
+		//Box::CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.5f, 0.5f, 1.5f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
+		//Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.5f, 1.5f, 0.5f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
+		//Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(0.5f, 0.5f, 0.5f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
+
+		Box::CreateCharacter(Point(+6.0f, 1.5f, 4.0f), Vector(1.0f, 1.0f, 1.0f), 30.0f, Vector(1.5f, 0.5f, 1.5f));
+		Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.0f, 1.0f, 1.0f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
+		Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(1.0f, 1.0f, 1.0f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
 
 
-		Box::CreateCharacter(Point(-1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
-		Box::CreateCharacter(Point(+1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
+		//Box::CreateCharacter(Point(-1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
+		//Box::CreateCharacter(Point(+1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
 
 
 
@@ -568,7 +572,6 @@ namespace test {
 
 		m_ShaderMesh->SetUniform1i("u_Image", 0);
 
-
 		// Draw MESH
 		m_mesh->Draw(m_ShaderMesh);
 	}
@@ -612,8 +615,9 @@ namespace test {
 			myScaleInverse.SetScale(1 / box->m_scale);
 			myRotationInverse = myRotation.Transposed();
 			myTranslateInverse.SetTranslation(-box->m_position);	//Point operator-() const;
-			box->m_TransformInverse = myScaleInverse * myRotationInverse * myTranslateInverse;
-
+			
+			//box->m_TransformInverse = myScaleInverse * myRotationInverse * myTranslateInverse;
+			box->m_TransformInverse = box->m_Transform.InvertedTR(); 
 
 			glm::mat4 mvp;
 			if (box == m_Player_01)
@@ -676,7 +680,9 @@ namespace test {
 			myScaleInverse.SetScale(1 / box->m_scale);
 			myRotationInverse = myRotation.Transposed();
 			myTranslateInverse.SetTranslation(-box->m_position);	//Point operator-() const;
+			
 			box->m_TransformInverse = myScaleInverse * myRotationInverse * myTranslateInverse;
+			//box->m_TransformInverse = box->m_Transform.InvertedTR();
 
 
 			glm::mat4 mvp;

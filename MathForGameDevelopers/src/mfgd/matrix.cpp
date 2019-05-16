@@ -67,6 +67,11 @@ bool Matrix4x4::operator==(const glm::mat4 & t) const
 	return true;
 }
 
+Vector Matrix4x4::GetTranslation() const
+{
+	return Vector(m[0][3], m[1][3], m[2][3]);
+}
+
 
 void Matrix4x4::SetTranslation(const Vector & vecPos)
 {
@@ -183,6 +188,40 @@ glm::mat4 Matrix4x4::ToGlm() const
 
 	r = glm::transpose(r);
 	return r;
+}
+
+Matrix4x4 Matrix4x4::InvertedTR() const
+{
+	// This method can only be used if the matrix is a translation/rotation matrix.
+	// The below asserts will trigger if this is not the case.
+	//TAssert(fabs(GetForwardVector().LengthSqr() - 1) < 0.00001f);   // Each basis vector should be length 1.
+	//TAssert(fabs(GetUpVector().LengthSqr() - 1) < 0.00001f);
+	//TAssert(fabs(GetRightVector().LengthSqr() - 1) < 0.00001f);
+	//TAssert(fabs(GetForwardVector().Dot(GetUpVector())) < 0.0001f); // All vectors should be orthogonal.
+	//TAssert(fabs(GetForwardVector().Dot(GetRightVector())) < 0.0001f);
+	//TAssert(fabs(GetRightVector().Dot(GetUpVector())) < 0.0001f);
+
+
+	Matrix4x4 M;
+
+	// M^-1 = R^-1 * T^-1
+	/*
+			 +-          -+  +-           -+   +-            -+  
+			 |            |  |             |   |              |  
+	LookAt = | R^T      0 |  | I       -t  | = | R^T  -(R^T)*t|  
+			 |            |  |             |   |              |  
+			 | 0        1 |  | 0        1  |   | 0          1 |  
+			 +-          -+  +-           -+   +-            -+  
+	*/
+
+	// Create the transpose upper 3x3 matrix
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			M.m[i][j] = m[j][i];
+
+	// The new matrix translatrion = -Rt
+	M.SetTranslation(-(M*GetTranslation()));
+	return M;
 }
 
 

@@ -68,13 +68,14 @@ void Box::TakeDamage(int iDamage)
 	if (m_iHealth <= 0)
 	{
 		//if (m_bTakesDamage)
-		if(true)
+		if(false)
 		{
 			std::cout << " regenerate " << std::endl;
 
 			Box* nNew = Box::CreateCharacter(
 				Point((float)(rand() % 20) - 10, 0, (float)(rand() % 20) - 10),
-				Vector(0.5f, 0.5f, 0.5f),
+				//Vector(0.5f, 0.5f, 0.5f),
+				Vector(1.0f, 1.0f, 1.0f),
 				(float)(rand() % 360),
 				Vector(1.0f, 1.0f, 1.0f));
 

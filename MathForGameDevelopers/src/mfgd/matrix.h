@@ -28,6 +28,14 @@ public:
 	bool operator==(const glm::mat4& t) const;
 
 
+	// Add a transformation
+	// ...
+
+	Vector GetTranslation() const;
+
+
+
+
 	// Set a transformation
 	void SetTranslation(const Vector& vecPos);
 	void SetRotation(float flAngle, const Vector& vecAxis);		// Assume te axis is a normalized vector
@@ -39,6 +47,10 @@ public:
 	Vector4d operator*(const Vector4d& v) const;
 
 	glm::mat4 ToGlm() const;
+
+
+	// 
+	Matrix4x4 InvertedTR() const;
 
 	struct MVector4D
 	{
