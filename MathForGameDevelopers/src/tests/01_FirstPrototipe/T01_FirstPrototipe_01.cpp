@@ -22,53 +22,22 @@ namespace test {
 	{
 		#include "E00_cube_vertices.h"
 
+
 		// NEW mesh----------------------------------------------------------------------------------------
-		std::vector<Vertex> vertices_3v_3n_2t;
-		glm::vec3 temp_pos, temp_norm;
-		glm::vec2 temp_texC;
-		int i = 0;
-		for (float val : cube_Unitario_vertices_3v_3n_2t)
-		{
-			switch (i)
-			{
-			case 0:	// Position
-				temp_pos.x = val;
-				break;
-			case 1:
-				temp_pos.y = val;
-				break;
-			case 2:
-				temp_pos.z = val;
-				break;
-			case 3:	// Normal
-				temp_norm.x = val;
-				break;
-			case 4:
-				temp_norm.y = val;
-				break;
-			case 5:
-				temp_norm.z = val;
-				break;
-			case 6:	// TexCoords
-				temp_texC.x = val;
-				break;
-			case 7:
-				temp_texC.y = val;
-				vertices_3v_3n_2t.emplace_back(temp_pos, temp_norm, temp_texC);
-				i = -1; // Restart counter...
-				break;
-			default:
-				break;
-			}
-			i++;
-		}
+		std::vector<Vertex> vertici;
+		unsigned int lay[] = { 3,3,4 };
+		fill_vertex_from_array(vertici, cube_Unitario_vertices_3v_3n_2t, sizeof(cube_Unitario_vertices_3v_3n_2t)/sizeof(float), lay, 3);
 
 		// Textures - Shared pointer
 		msp_mTexture0 = std::make_shared<Texture>("res/textures/monster.png", TextureType::DIFFUSE); // ontainer2.png
 		msp_Textures.push_back(msp_mTexture0);
 
 		std::vector<unsigned int> indices0;
-		m_mesh = std::make_unique<Mesh>(vertices_3v_3n_2t, indices0, msp_Textures);
+		
+		// Test sempli
+		//m_mesh = std::make_unique<Mesh>(vertices_3v_3n_2t, indices0, msp_Textures);
+		m_mesh = std::make_unique<Mesh>(vertici, indices0, msp_Textures);
+
 		m_ShaderMesh = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S01_FirstPrototipe_01.Shader");
 		m_ShaderLine = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S00_Light.Shader");
 
@@ -89,7 +58,10 @@ namespace test {
 
 		std::vector<Vertex> vertices_quad_3v_3n_2t;
 		std::vector<unsigned int> vec_quad_indices;
-		i = 0;
+		glm::vec3 temp_pos, temp_norm;
+		glm::vec2 temp_texC;
+		int i = 0;
+		
 		for (float val : positions_quad)
 		{
 			switch (i)
@@ -832,6 +804,52 @@ namespace test {
 			return true;
 
 		return false;
+	}
+
+	void T01_FirstPrototipe_01::fill_vertex_from_array(std::vector<Vertex>& vertices, float data[], unsigned int dSize, unsigned int layout[], unsigned int lSize)
+	{
+
+		glm::vec3 temp_pos, temp_norm;
+		glm::vec2 temp_texC;
+
+		int i_stride = 0;
+		//for (float val : data)
+		for (unsigned int i = 0; i < dSize; i++)
+		{
+			float val = data[i];
+			switch (i_stride)
+			{
+			case 0:	// Position
+				temp_pos.x = val;
+				break;
+			case 1:
+				temp_pos.y = val;
+				break;
+			case 2:
+				temp_pos.z = val;
+				break;
+			case 3:	// Normal
+				temp_norm.x = val;
+				break;
+			case 4:
+				temp_norm.y = val;
+				break;
+			case 5:
+				temp_norm.z = val;
+				break;
+			case 6:	// TexCoords
+				temp_texC.x = val;
+				break;
+			case 7:
+				temp_texC.y = val;
+				vertices.emplace_back(temp_pos, temp_norm, temp_texC);
+				i_stride = -1; // Restart counter...
+				break;
+			default:
+				break;
+			}
+			i_stride++;
+		}
 	}
 
 }
