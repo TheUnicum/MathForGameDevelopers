@@ -179,3 +179,50 @@ std::ostream & operator<<(std::ostream & stream, const VertexTB & vertex)
 		"), Bitangent:(" << vertex.Bitangent.x << ", " << vertex.Bitangent.y << ", " << vertex.Bitangent.z << ")";
 	return stream;
 }
+
+
+// utility generic fuctions
+void Mesh_Fill_vertex_from_array(std::vector<Vertex>& vertices, float data[], unsigned int dSize, unsigned int layout[], unsigned int lSize)
+{
+	glm::vec3 temp_pos, temp_norm;
+	glm::vec2 temp_texC;
+
+	int i_stride = 0;
+	//for (float val : data)
+	for (unsigned int i = 0; i < dSize; i++)
+	{
+		float val = data[i];
+		switch (i_stride)
+		{
+		case 0:	// Position
+			temp_pos.x = val;
+			break;
+		case 1:
+			temp_pos.y = val;
+			break;
+		case 2:
+			temp_pos.z = val;
+			break;
+		case 3:	// Normal
+			temp_norm.x = val;
+			break;
+		case 4:
+			temp_norm.y = val;
+			break;
+		case 5:
+			temp_norm.z = val;
+			break;
+		case 6:	// TexCoords
+			temp_texC.x = val;
+			break;
+		case 7:
+			temp_texC.y = val;
+			vertices.emplace_back(temp_pos, temp_norm, temp_texC);
+			i_stride = -1; // Restart counter...
+			break;
+		default:
+			break;
+		}
+		i_stride++;
+	}
+}

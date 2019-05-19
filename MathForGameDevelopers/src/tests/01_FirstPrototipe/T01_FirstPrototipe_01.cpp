@@ -24,19 +24,17 @@ namespace test {
 
 
 		// NEW mesh----------------------------------------------------------------------------------------
-		std::vector<Vertex> vertici;
-		unsigned int lay[] = { 3,3,4 };
-		fill_vertex_from_array(vertici, cube_Unitario_vertices_3v_3n_2t, sizeof(cube_Unitario_vertices_3v_3n_2t)/sizeof(float), lay, 3);
+		std::vector<Vertex> vertices_3v_3n_2t;
+		std::vector<unsigned int> indices0;
+		Mesh_Fill_vertex_from_array(vertices_3v_3n_2t, cube_Unitario_vertices_3v_3n_2t, sizeof(cube_Unitario_vertices_3v_3n_2t)/sizeof(float));
+	
 
 		// Textures - Shared pointer
 		msp_mTexture0 = std::make_shared<Texture>("res/textures/monster.png", TextureType::DIFFUSE); // ontainer2.png
 		msp_Textures.push_back(msp_mTexture0);
-
-		std::vector<unsigned int> indices0;
 		
-		// Test sempli
-		//m_mesh = std::make_unique<Mesh>(vertices_3v_3n_2t, indices0, msp_Textures);
-		m_mesh = std::make_unique<Mesh>(vertici, indices0, msp_Textures);
+		// Mesh
+		m_mesh = std::make_unique<Mesh>(vertices_3v_3n_2t, indices0, msp_Textures);
 
 		m_ShaderMesh = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S01_FirstPrototipe_01.Shader");
 		m_ShaderLine = std::make_unique<Shader>("src/tests/01_FirstPrototipe/S00_Light.Shader");
@@ -58,45 +56,7 @@ namespace test {
 
 		std::vector<Vertex> vertices_quad_3v_3n_2t;
 		std::vector<unsigned int> vec_quad_indices;
-		glm::vec3 temp_pos, temp_norm;
-		glm::vec2 temp_texC;
-		int i = 0;
-		
-		for (float val : positions_quad)
-		{
-			switch (i)
-			{
-			case 0:	// Position
-				temp_pos.x = val;
-				break;
-			case 1:
-				temp_pos.y = val;
-				break;
-			case 2:
-				temp_pos.z = val;
-				break;
-			case 3:	// Normal
-				temp_norm.x = val;
-				break;
-			case 4:
-				temp_norm.y = val;
-				break;
-			case 5:
-				temp_norm.z = val;
-				break;
-			case 6:	// TexCoords
-				temp_texC.x = val;
-				break;
-			case 7:
-				temp_texC.y = val;
-				vertices_quad_3v_3n_2t.emplace_back(temp_pos, temp_norm, temp_texC);
-				i = -1; // Restart counter...
-				break;
-			default:
-				break;
-			}
-			i++;
-		}
+		Mesh_Fill_vertex_from_array(vertices_quad_3v_3n_2t, positions_quad, sizeof(cube_Unitario_vertices_3v_3n_2t)/sizeof(float));
 
 		for (unsigned int val : uint_quad_indices)
 			vec_quad_indices.push_back(val);
@@ -104,6 +64,7 @@ namespace test {
 		msp_mTextureFloor = std::make_shared<Texture>("res/textures/metal.png", TextureType::DIFFUSE);
 		msp_mTextures2.push_back(msp_mTextureFloor);
 		m_mesh_quad = std::make_unique<Mesh>(vertices_quad_3v_3n_2t, vec_quad_indices, msp_mTextures2);
+
 
 		// --------------------- New My Player--------------------------
 		m_Player_01 = std::make_shared<Player>(Point(+0.0f, 0.0f, 0.0f), Vector(0.22f, 0.44f, 0.22f), 0.0f, Vector(1.5f, 0.5f, 1.5f));
@@ -117,11 +78,9 @@ namespace test {
 		Box::CreateCharacter(Point(+5.5f, 1.5f, -2.0f), Vector(1.0f, 1.0f, 1.0f), 160.0f, Vector(1.5f, 0.5f, 1.5f));
 		Box::CreateCharacter(Point(-5.5f, 1.5f, -2.0f), Vector(1.0f, 1.0f, 1.0f), 40.0f, Vector(1.5f, 0.5f, 1.5f));
 
-
+		// Boxes Test For Quaternions
 		//Box::CreateCharacter(Point(-1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
 		//Box::CreateCharacter(Point(+1.f, 1.0f, 0.0f), Vector(0.2f, .75f, 0.2f), 00.0f, Vector(1.0f, 0.0f, 0.0f));
-
-
 
 		//  VSync / Enabel & Disable
 		glfwSwapInterval(1);
@@ -282,8 +241,6 @@ namespace test {
 		}
 
 
-
-
 		// Disable face culling for bidimensional object
 		GLCall(glDisable(GL_CULL_FACE));
 		{	// Floor
@@ -340,9 +297,6 @@ namespace test {
 
 
 		// Target Box
-		//renderCube(m_Target_1, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-		//renderCube(m_Target_2, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
-		//renderCube(m_Target_3, glm::vec3(0.6, 0.6, 1.0f), proj, view, false);
 		for (size_t i = 0; i < MAX_CHARACTERS; i++)
 		{
 			if (Box::m_apEntityList[i])
@@ -350,8 +304,6 @@ namespace test {
 		}
 
 
-
-		
 		if (m_Shot_active)
 		{
 
@@ -804,52 +756,6 @@ namespace test {
 			return true;
 
 		return false;
-	}
-
-	void T01_FirstPrototipe_01::fill_vertex_from_array(std::vector<Vertex>& vertices, float data[], unsigned int dSize, unsigned int layout[], unsigned int lSize)
-	{
-
-		glm::vec3 temp_pos, temp_norm;
-		glm::vec2 temp_texC;
-
-		int i_stride = 0;
-		//for (float val : data)
-		for (unsigned int i = 0; i < dSize; i++)
-		{
-			float val = data[i];
-			switch (i_stride)
-			{
-			case 0:	// Position
-				temp_pos.x = val;
-				break;
-			case 1:
-				temp_pos.y = val;
-				break;
-			case 2:
-				temp_pos.z = val;
-				break;
-			case 3:	// Normal
-				temp_norm.x = val;
-				break;
-			case 4:
-				temp_norm.y = val;
-				break;
-			case 5:
-				temp_norm.z = val;
-				break;
-			case 6:	// TexCoords
-				temp_texC.x = val;
-				break;
-			case 7:
-				temp_texC.y = val;
-				vertices.emplace_back(temp_pos, temp_norm, temp_texC);
-				i_stride = -1; // Restart counter...
-				break;
-			default:
-				break;
-			}
-			i_stride++;
-		}
 	}
 
 }

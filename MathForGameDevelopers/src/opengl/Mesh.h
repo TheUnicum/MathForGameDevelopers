@@ -86,3 +86,6 @@ private:
 // utility overload
 std::ostream& operator<<(std::ostream& stream, const Vertex& vertex);
 std::ostream& operator<<(std::ostream& stream, const VertexTB& vertex);
+
+// utility generic fuctions
+void Mesh_Fill_vertex_from_array(std::vector<Vertex>& vertices, float data[], unsigned int dSize, unsigned int layout[] = nullptr, unsigned int lSize = 0);

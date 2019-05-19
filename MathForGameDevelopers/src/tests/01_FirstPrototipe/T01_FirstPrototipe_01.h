@@ -97,9 +97,6 @@ namespace test {
 
 		float m_flTimeCreated = 0.0f;
 
-
-		void fill_vertex_from_array(std::vector<Vertex>& vertices, float data[], unsigned int dSize, unsigned int layout[], unsigned int lSize);
-
 	};
 
 }
